@@ -12,14 +12,9 @@ import { useAuthStore } from '../store'
 const drawerWidth = 240
 
 function Layout() {
-  const [mobileOpen, setMobileOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
   const { user, isAuthenticated, logout } = useAuthStore()
   const navigate = useNavigate()
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -35,154 +30,170 @@ function Layout() {
     navigate('/')
   }
 
-  const drawer = (
-    <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          Cway Academy
-        </Typography>
-      </Toolbar>
-      <List>
-        <ListItem button component={Link} to="/">
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-          <ListItemText primary="Home" />
-        </ListItem>
-        <ListItem button component={Link} to="/courses">
-          <ListItemIcon>
-            <SchoolIcon />
-          </ListItemIcon>
-          <ListItemText primary="Courses" />
-        </ListItem>
-        {isAuthenticated && (
-          <>
-            <ListItem button>
-              <ListItemIcon>
-                <ChatIcon />
-              </ListItemIcon>
-              <ListItemText primary="Discuss" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="Profile" />
-            </ListItem>
-          </>
-        )}
-      </List>
-    </div>
-  )
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar
-        position="fixed"
+    <Box sx={{ minHeight: '100vh', bgcolor: '#fafafa' }}>
+      {/* Clean Minimal Navbar */}
+      <AppBar 
+        position="sticky" 
+        elevation={0}
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          bgcolor: 'white',
+          borderBottom: '1px solid #e5e5e5',
+          color: '#374151',
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+        <Toolbar sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              fontWeight: 700,
+              color: '#111827',
+              textDecoration: 'none',
+              mr: 4,
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Cway Academy
           </Typography>
 
+          {/* Navigation Links */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4, mr: 'auto' }}>
+            <Button
+              component={Link}
+              to="/"
+              sx={{
+                color: '#6b7280',
+                textTransform: 'none',
+                fontWeight: 500,
+                '&:hover': {
+                  color: '#111827',
+                  bgcolor: 'transparent',
+                }
+              }}
+            >
+              Home
+            </Button>
+            <Button
+              component={Link}
+              to="/courses"
+              sx={{
+                color: '#6b7280',
+                textTransform: 'none',
+                fontWeight: 500,
+                '&:hover': {
+                  color: '#111827',
+                  bgcolor: 'transparent',
+                }
+              }}
+            >
+              Courses
+            </Button>
+            {isAuthenticated && (
+              <Button
+                component={Link}
+                to="/dashboard"
+                sx={{
+                  color: '#6b7280',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  '&:hover': {
+                    color: '#111827',
+                    bgcolor: 'transparent',
+                  }
+                }}
+              >
+                Dashboard
+              </Button>
+            )}
+          </Box>
+
+          {/* Auth Section */}
           {isAuthenticated ? (
-            <div>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
                 onClick={handleMenu}
-                color="inherit"
+                sx={{
+                  p: 0,
+                  border: '2px solid #e5e5e5',
+                  '&:hover': {
+                    borderColor: '#d1d5db',
+                  }
+                }}
               >
                 {user?.avatarUrl ? (
                   <Avatar src={user.avatarUrl} sx={{ width: 32, height: 32 }} />
                 ) : (
-                  <AccountCircle />
+                  <Avatar sx={{ width: 32, height: 32, bgcolor: '#9ca3af' }}>
+                    {user?.name?.charAt(0) || 'U'}
+                  </Avatar>
                 )}
               </IconButton>
               <Menu
-                id="menu-appbar"
                 anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
+                sx={{
+                  '& .MuiPaper-root': {
+                    border: '1px solid #e5e5e5',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    mt: 1,
+                  }
+                }}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleClose} sx={{ color: '#374151' }}>
+                  Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogout} sx={{ color: '#374151' }}>
+                  Logout
+                </MenuItem>
               </Menu>
-            </div>
+            </Box>
           ) : (
-            <Box>
-              <Button color="inherit" component={Link} to="/login">
-                Login
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                component={Link}
+                to="/login"
+                sx={{
+                  color: '#6b7280',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  '&:hover': {
+                    color: '#111827',
+                    bgcolor: 'transparent',
+                  }
+                }}
+              >
+                Log in
               </Button>
-              <Button color="inherit" component={Link} to="/register">
-                Register
+              <Button
+                component={Link}
+                to="/register"
+                variant="contained"
+                sx={{
+                  bgcolor: '#111827',
+                  color: 'white',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  px: 3,
+                  borderRadius: 2,
+                  boxShadow: 'none',
+                  '&:hover': {
+                    bgcolor: '#1f2937',
+                    boxShadow: 'none',
+                  }
+                }}
+              >
+                Sign up
               </Button>
             </Box>
           )}
         </Toolbar>
       </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-        }}
-      >
-        <Toolbar />
+
+      {/* Main Content */}
+      <Box component="main">
         <Outlet />
       </Box>
     </Box>
