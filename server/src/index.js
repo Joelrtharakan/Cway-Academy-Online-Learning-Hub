@@ -13,6 +13,8 @@ import courseRoutes from './routes/courses.js'
 import quizRoutes from './routes/quizzes.js'
 import discussionRoutes from './routes/discussions.js'
 import analyticsRoutes from './routes/analytics.js'
+import certificateRoutes from './routes/certificates.js'
+import aiRoutes from './routes/ai.js'
 import { DiscussionMessage, Poll } from './models/index.js'
 
 dotenv.config()
@@ -34,6 +36,7 @@ app.use(cors())
 app.use(helmet())
 app.use(express.json())
 app.use('/media', express.static(path.join(__dirname, '../storage/media')))
+app.use('/certificates', express.static(path.join(__dirname, '../storage/certificates')))
 
 // Routes
 app.use('/api/auth', authRoutes)
@@ -41,11 +44,22 @@ app.use('/api/courses', courseRoutes)
 app.use('/api/quizzes', quizRoutes)
 app.use('/api/discussions', discussionRoutes)
 app.use('/api/analytics', analyticsRoutes)
+app.use('/api/certificates', certificateRoutes)
+app.use('/api/ai', aiRoutes)
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cway-academy')
-  .then(() => console.log('Connected to MongoDB'))
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cway-academy', {
+    serverSelectionTimeoutMS: 10000, // 10 seconds for Atlas connection
+    socketTimeoutMS: 45000,
+    bufferCommands: false,
+    maxPoolSize: 10, // Maintain up to 10 socket connections
+  })
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch((error) => {
+    console.error('MongoDB Atlas connection error:', error)
+    process.exit(1)
+  })
   .catch((err) => console.error('MongoDB connection error:', err))
 
 // Socket.IO events

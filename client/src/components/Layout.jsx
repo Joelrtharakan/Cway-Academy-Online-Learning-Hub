@@ -9,6 +9,7 @@ import PersonIcon from '@mui/icons-material/Person'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
+import VerifiedIcon from '@mui/icons-material/Verified'
 import { useAuthStore, useUIStore } from '../store'
 
 const drawerWidth = 240
@@ -95,21 +96,55 @@ function Layout() {
               Courses
             </Button>
             {isAuthenticated && (
-              <Button
-                component={Link}
-                to="/dashboard"
-                sx={{
-                  color: 'text.secondary',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  '&:hover': {
-                    color: 'text.primary',
-                    bgcolor: 'transparent',
-                  }
-                }}
-              >
-                Dashboard
-              </Button>
+              <>
+                <Button
+                  component={Link}
+                  to="/analytics"
+                  sx={{
+                    color: 'text.secondary',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    '&:hover': {
+                      color: 'text.primary',
+                      bgcolor: 'transparent',
+                    }
+                  }}
+                >
+                  Analytics
+                </Button>
+                <Button
+                  component={Link}
+                  to="/certificates"
+                  sx={{
+                    color: 'text.secondary',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    '&:hover': {
+                      color: 'text.primary',
+                      bgcolor: 'transparent',
+                    }
+                  }}
+                >
+                  Certificates
+                </Button>
+                {(user?.role === 'tutor' || user?.role === 'admin') && (
+                  <Button
+                    component={Link}
+                    to="/ai-course-generator"
+                    sx={{
+                      color: 'text.secondary',
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      '&:hover': {
+                        color: 'text.primary',
+                        bgcolor: 'transparent',
+                      }
+                    }}
+                  >
+                    AI Generator
+                  </Button>
+                )}
+              </>
             )}
           </Box>
 

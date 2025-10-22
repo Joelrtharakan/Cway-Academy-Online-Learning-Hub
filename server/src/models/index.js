@@ -16,6 +16,8 @@ const sectionSchema = new mongoose.Schema({
     title: { type: String, required: true },
     order: { type: Number, required: true },
     videoUrl: { type: String, required: true },
+    startTime: { type: Number, default: 0 }, // Start time in seconds
+    endTime: { type: Number, default: 0 }, // End time in seconds (0 means play to end)
     resources: [{
       name: { type: String, required: true },
       url: { type: String, required: true },
@@ -34,6 +36,16 @@ const courseSchema = new mongoose.Schema({
   sections: [sectionSchema],
   price: { type: Number },
   published: { type: Boolean, default: false },
+  aiGenerated: { type: Boolean, default: false },
+  aiMetadata: {
+    generatedBy: { type: String }, // AI model used
+    generationPrompt: { type: String },
+    difficulty: { type: String },
+    duration: { type: String },
+    includeVideos: { type: Boolean },
+    includeQuizzes: { type: Boolean },
+    generatedAt: { type: Date },
+  },
   createdAt: { type: Date, default: Date.now },
 })
 
@@ -113,10 +125,19 @@ const userBadgeSchema = new mongoose.Schema({
   awardedAt: { type: Date, default: Date.now },
 })
 
+const enrollmentSchema = new mongoose.Schema({
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
+  enrolledAt: { type: Date, default: Date.now },
+  progress: { type: Number, default: 0 }, // percentage 0-100
+  completedAt: { type: Date },
+})
+
 // Indexes
 courseSchema.index({ slug: 1 })
 discussionMessageSchema.index({ room: 1, createdAt: -1 })
 attemptSchema.index({ quiz: 1, student: 1 })
+enrollmentSchema.index({ student: 1, course: 1 }, { unique: true })
 
 export const User = mongoose.model('User', userSchema)
 export const Course = mongoose.model('Course', courseSchema)
@@ -127,3 +148,4 @@ export const Certificate = mongoose.model('Certificate', certificateSchema)
 export const Poll = mongoose.model('Poll', pollSchema)
 export const Badge = mongoose.model('Badge', badgeSchema)
 export const UserBadge = mongoose.model('UserBadge', userBadgeSchema)
+export const Enrollment = mongoose.model('Enrollment', enrollmentSchema)

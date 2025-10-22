@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import App from './App'
 import theme, { darkTheme } from './theme'
 import { useUIStore } from './store'
+import { SocketProvider } from './context/SocketContext'
 
 const queryClient = new QueryClient()
 
@@ -18,7 +19,9 @@ const ThemedApp = () => {
   return (
     <ThemeProvider theme={currentTheme}>
       <CssBaseline />
-      <App />
+      <SocketProvider>
+        <App />
+      </SocketProvider>
     </ThemeProvider>
   )
 }

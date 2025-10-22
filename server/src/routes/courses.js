@@ -1,7 +1,7 @@
 import express from 'express'
 import multer from 'multer'
 import path from 'path'
-import { Course, User } from '../models/index.js'
+import { Course, User, Enrollment } from '../models/index.js'
 import { authenticate, authorize, validate, schemas } from '../middleware/auth.js'
 
 const router = express.Router()
@@ -197,12 +197,58 @@ router.post('/:id/lessons', authenticate, authorize('tutor', 'admin'), upload.fi
   }
 })
 
+// Get enrolled courses (student)
+router.get('/enrolled/me', authenticate, authorize('student'), async (req, res) => {
+  try {
+    const enrollments = await Enrollment.find({ student: req.user._id })
+      .populate({
+        path: 'course',
+        populate: { path: 'tutor', select: 'name avatarUrl' }
+      })
+      .sort({ enrolledAt: -1 })
+
+    const enrolledCourses = enrollments.map(enrollment => ({
+      ...enrollment.course.toObject(),
+      enrollment: {
+        enrolledAt: enrollment.enrolledAt,
+        progress: enrollment.progress,
+        completedAt: enrollment.completedAt,
+      }
+    }))
+
+    res.json({ courses: enrolledCourses })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch enrolled courses' })
+  }
+})
+
 // Enroll in course (student)
 router.post('/:id/enrol', authenticate, authorize('student'), async (req, res) => {
   try {
-    // In a real app, you'd have an Enrollment model
-    // For now, just return success
-    res.json({ message: 'Enrolled successfully' })
+    const course = await Course.findById(req.params.id)
+
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' })
+    }
+
+    // Check if already enrolled
+    const existingEnrollment = await Enrollment.findOne({
+      student: req.user._id,
+      course: req.params.id,
+    })
+
+    if (existingEnrollment) {
+      return res.status(400).json({ error: 'Already enrolled in this course' })
+    }
+
+    // Create enrollment
+    const enrollment = new Enrollment({
+      student: req.user._id,
+      course: req.params.id,
+    })
+
+    await enrollment.save()
+    res.json({ message: 'Enrolled successfully', enrollment })
   } catch (error) {
     res.status(500).json({ error: 'Enrollment failed' })
   }

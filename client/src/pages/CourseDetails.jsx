@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Container,
   Grid,
@@ -26,6 +26,7 @@ import {
   IconButton,
   Divider,
   Stack,
+  Alert,
 } from '@mui/material'
 import {
   PlayArrow,
@@ -50,13 +51,43 @@ import api from '../api/index.js'
 function CourseDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, user } = useAuthStore()
   const [activeTab, setActiveTab] = useState(0)
   const [expandedLesson, setExpandedLesson] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
+  const queryClient = useQueryClient()
 
-  // Mock course data - in real app this would come from API
-  const course = {
+  // Fetch course data
+  const { data: courseData, isLoading } = useQuery({
+    queryKey: ['course', id],
+    queryFn: () => api.get(`/api/courses/${id}`),
+    enabled: !!id,
+  })
+
+  // Enrollment mutation
+  const enrollMutation = useMutation({
+    mutationFn: async (courseId) => {
+      console.log('Attempting to enroll in course:', courseId)
+      const response = await api.post(`/api/courses/${courseId}/enrol`)
+      console.log('Enrollment response:', response)
+      return response
+    },
+    onSuccess: (data) => {
+      console.log('Enrollment successful, navigating...')
+      // Invalidate enrolled courses query to refresh dashboard
+      queryClient.invalidateQueries(['enrolled-courses'])
+      // Navigate to course player - it will automatically select the first lesson
+      navigate(`/course/${id}`)
+    },
+    onError: (error) => {
+      console.error('Enrollment failed:', error)
+      console.error('Error response:', error.response)
+      console.error('Error data:', error.response?.data)
+      // Handle enrollment error (could show a toast notification)
+    },
+  })
+
+  const course = courseData?.course || {
     _id: id,
     title: 'Complete React Developer Course with Hands-on Projects',
     description: 'Master React from basics to advanced concepts with real-world projects. Learn hooks, context, Redux, and build production-ready applications.',
@@ -156,8 +187,14 @@ function CourseDetails() {
       navigate('/login')
       return
     }
-    // Handle enrollment logic
-    console.log('Enrolling in course:', id)
+
+    if (user?.role !== 'student') {
+      alert('Only students can enroll in courses. Please log in with a student account.')
+      return
+    }
+    
+    // Enroll in the course
+    enrollMutation.mutate(id)
   }
 
   const getLessonIcon = (type) => {
@@ -268,34 +305,66 @@ function CourseDetails() {
                 </Typography>
               </Box>
 
-              <Stack spacing={2}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  size="large"
-                  onClick={handleEnroll}
-                  sx={{
-                    py: 1.5,
-                    borderRadius: 2,
-                    fontWeight: 600,
-                    bgcolor: '#667eea',
-                    '&:hover': { bgcolor: '#5a6fd8' },
-                  }}
-                >
-                  {isAuthenticated ? 'Enroll Now' : 'Login to Enroll'}
-                </Button>
+                <Stack spacing={2}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    size="large"
+                    onClick={handleEnroll}
+                    disabled={enrollMutation.isPending || !isAuthenticated || user?.role !== 'student'}
+                    sx={{
+                      py: 1.5,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      bgcolor: '#667eea',
+                      '&:hover': { bgcolor: '#5a6fd8' },
+                      '&:disabled': { bgcolor: 'grey.400' },
+                    }}
+                  >
+                    {enrollMutation.isPending ? 'Enrolling...' : (!isAuthenticated ? 'Login to Enroll' : user?.role !== 'student' ? 'Students Only' : 'Enroll Now')}
+                  </Button>
 
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<Share />}
-                  sx={{ borderRadius: 2 }}
-                >
-                  Share Course
-                </Button>
-              </Stack>
+                  {enrollMutation.isError && (
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                      Enrollment failed: {enrollMutation.error?.response?.data?.error || enrollMutation.error?.message || 'Unknown error'}
+                    </Alert>
+                  )}
 
-              <Divider sx={{ my: 3 }} />
+                  {enrollMutation.isSuccess && (
+                    <Alert severity="success" sx={{ mt: 2 }}>
+                      Enrollment successful! Redirecting to course...
+                    </Alert>
+                  )}
+
+                  {isAuthenticated && (
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      size="large"
+                      onClick={() => {
+                        if (courseData?.course?.sections?.[0]?.lessons?.[0]?._id) {
+                          navigate(`/course/${id}/lesson/${courseData.course.sections[0].lessons[0]._id}`)
+                        }
+                      }}
+                      sx={{
+                        py: 1.5,
+                        borderRadius: 2,
+                        fontWeight: 600,
+                      }}
+                    >
+                      Start Course
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<Share />}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Share Course
+                  </Button>
+                </Stack>              <Divider sx={{ my: 3 }} />
 
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 This course includes:

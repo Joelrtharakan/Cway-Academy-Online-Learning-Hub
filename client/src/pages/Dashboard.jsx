@@ -1,3 +1,4 @@
+// Dashboard page removed. File intentionally left blank.
 import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
@@ -50,136 +51,121 @@ import {
   FlashOn,
   Diamond,
 } from '@mui/icons-material'
-import { useAuthStore } from '../store'
-import api from '../api/index.js'
-
-// Revolutionary Dashboard Keyframe Animations
-const keyframes = `
-  @keyframes dashboardFloat {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(1deg); }
-  }
-
-  @keyframes dashboardGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 0 60px rgba(118, 75, 162, 0.4); }
-  }
-
-  @keyframes dashboardShimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-
-  @keyframes dashboardPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.9; }
-  }
-
-  @keyframes dashboardRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  @keyframes dashboardBounce {
-    0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
-    40%, 43% { transform: translate3d(0, -15px, 0); }
-    70% { transform: translate3d(0, -7px, 0); }
-    90% { transform: translate3d(0, -2px, 0); }
-  }
-
-  @keyframes dashboardSlide {
-    0% { transform: translateX(-100%); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
-  }
-
-  @keyframes dashboardZoom {
-    0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
-    50% { transform: scale(1.05) rotate(2deg); }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-
-  @keyframes dashboardWave {
-    0%, 100% { transform: translateY(0px) scaleY(1); }
-    25% { transform: translateY(-5px) scaleY(1.02); }
-    75% { transform: translateY(5px) scaleY(0.98); }
-  }
-
-  @keyframes dashboardGradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-`;
-
-// Inject keyframes into document
-if (typeof document !== 'undefined') {
   const style = document.createElement('style');
   style.textContent = keyframes;
   document.head.appendChild(style);
 }
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState(0)
+  const [activeTab, setActiveTab] = useState(0) // Start with My Courses tab active
   const [menuAnchorEl, setMenuAnchorEl] = useState(null)
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [error, setError] = useState(null)
   const { user } = useAuthStore()
 
+  // Query for enrolled courses
+  const { 
+    data: enrolledCourses = [], // Provide default empty array
+    error: coursesError, 
+    isLoading: coursesLoading 
+  } = useQuery({
+    queryKey: ['enrolled-courses'],
+    queryFn: () => api.get('/api/courses/enrolled').then(res => res.data.courses),
+    onError: (err) => {
+      console.error('Error fetching enrolled courses:', err)
+      setError(err.message)
+    }
+  })
+
+  // Query for AI courses
+  const { 
+    data: aiCourses = [], // Provide default empty array
+    isLoading: aiCoursesLoading 
+  } = useQuery({
+    queryKey: ['ai-courses'],
+    queryFn: () => api.get('/api/courses?aiGenerated=true&published=true').then(res => res.data.courses),
+    onError: (err) => {
+      console.error('Error fetching AI courses:', err)
+      setError(err.message)
+    }
+  })
+
   useEffect(() => {
-    setIsLoaded(true)
-  }, [])
+    try {
+      setIsLoaded(true)
+      console.log('Dashboard mounted, user:', user)
+      console.log('Enrolled courses:', enrolledCourses)
+      console.log('AI courses:', aiCourses)
+    } catch (err) {
+      console.error('Error in Dashboard mount:', err)
+      setError(err.message)
+    }
+  }, [user, enrolledCourses, aiCourses])
 
-  // Mock data for enrolled courses - in real app this would come from API
-  const enrolledCourses = [
-    {
-      id: '1',
-      title: 'React for Beginners',
-      progress: 75,
-      lastAccessed: '2 days ago',
-      nextLesson: 'State Management',
-      instructor: 'John Doe',
-      rating: 4.8,
-      category: 'Programming',
-      thumbnail: 'https://picsum.photos/300/200?random=1',
-    },
-    {
-      id: '2',
-      title: 'Advanced JavaScript',
-      progress: 45,
-      lastAccessed: '1 week ago',
-      nextLesson: 'Async Programming',
-      instructor: 'Jane Smith',
-      rating: 4.9,
-      category: 'Programming',
-      thumbnail: 'https://picsum.photos/300/200?random=2',
-    },
-    {
-      id: '3',
-      title: 'UI/UX Design Fundamentals',
-      progress: 90,
-      lastAccessed: '3 hours ago',
-      nextLesson: 'Final Project',
-      instructor: 'Mike Johnson',
-      rating: 4.7,
-      category: 'Design',
-      thumbnail: 'https://picsum.photos/300/200?random=3',
-    },
-  ]
+  // Debug: Log active tab changes
+  useEffect(() => {
+    console.log('Active tab changed to:', activeTab)
+  }, [activeTab])
 
-  const recentActivities = [
-    { type: 'completed', course: 'React for Beginners', lesson: 'Components', time: '2 hours ago' },
-    { type: 'enrolled', course: 'Advanced JavaScript', time: '1 week ago' },
-    { type: 'certificate', course: 'HTML & CSS Basics', time: '2 weeks ago' },
-    { type: 'quiz', course: 'React for Beginners', score: 85, time: '3 days ago' },
-  ]
+  if (error) {
+    return (
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          p: 4,
+        }}
+      >
+        <Card sx={{ 
+          maxWidth: 500, 
+          width: '100%',
+          p: 4, 
+          textAlign: 'center',
+          background: 'rgba(255,255,255,0.1)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.2)',
+        }}>
+          <Typography variant="h5" sx={{ color: 'white', mb: 2 }}>
+            Something went wrong
+          </Typography>
+          <Typography sx={{ color: 'rgba(255,255,255,0.8)', mb: 3 }}>
+            {error}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => window.location.reload()}
+            sx={{
+              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+              color: 'white',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #5a6fd8, #6a4190)',
+              },
+            }}
+          >
+            Retry
+          </Button>
+        </Card>
+      </Box>
+    )
+  }
 
-  const achievements = [
-    { title: 'First Course Completed', description: 'Completed your first course', icon: '🎓', unlocked: true },
-    { title: 'Week Streak', description: 'Learned for 7 consecutive days', icon: '🔥', unlocked: true },
-    { title: 'Quiz Master', description: 'Scored 90%+ on 5 quizzes', icon: '🧠', unlocked: false },
-    { title: 'Speed Learner', description: 'Completed a course in under a week', icon: '⚡', unlocked: false },
-  ]
+  // Fetch personalized learning path
+  const { data: learningPathData } = useQuery({
+    queryKey: ['learning-path', user?.name],
+    queryFn: () => api.post('/api/ai/generate-learning-path', {
+      skillLevel: 'intermediate', // Could be dynamic based on user profile
+      interests: enrolledCourses.map(c => c.category),
+      goals: 'Improve programming skills',
+      availableTime: 10
+    }).then(res => res.data),
+    enabled: enrolledCourses.length > 0,
+  })
 
+  // Calculate stats from real data
   const stats = [
     { 
       label: 'Courses Enrolled', 
@@ -190,25 +176,40 @@ function Dashboard() {
     },
     { 
       label: 'Courses Completed', 
-      value: 2, 
+      value: enrolledCourses.filter(course => course.enrollment?.progress === 100).length, 
       icon: <CheckCircle />, 
       color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
       animation: 'dashboardPulse 2s ease-in-out infinite'
     },
     { 
       label: 'Hours Learned', 
-      value: 47, 
+      value: Math.floor(enrolledCourses.reduce((total, course) => total + (course.enrollment?.progress || 0) * 0.5, 0)), // Mock calculation
       icon: <AccessTime />, 
       color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
       animation: 'dashboardBounce 2.5s ease-in-out infinite'
     },
     { 
       label: 'Certificates Earned', 
-      value: 2, 
+      value: enrolledCourses.filter(course => course.enrollment?.completedAt).length, 
       icon: <EmojiEvents />, 
       color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
       animation: 'dashboardWave 3.5s ease-in-out infinite'
     },
+  ]
+
+  // Mock data for activities and achievements (can be replaced with real API calls later)
+  const recentActivities = [
+    { type: 'enrolled', course: enrolledCourses[0]?.title || 'New Course', time: 'Recently' },
+    { type: 'completed', course: 'Previous Course', lesson: 'Final Lesson', time: '2 weeks ago' },
+    { type: 'certificate', course: 'Completed Course', time: '1 month ago' },
+    { type: 'quiz', course: enrolledCourses[0]?.title || 'Course', score: 85, time: '1 week ago' },
+  ]
+
+  const achievements = [
+    { title: 'First Course Completed', description: 'Completed your first course', icon: '🎓', unlocked: enrolledCourses.some(c => c.enrollment?.completedAt) },
+    { title: 'Week Streak', description: 'Learned for 7 consecutive days', icon: '🔥', unlocked: enrolledCourses.length > 0 },
+    { title: 'Quiz Master', description: 'Scored 90%+ on 5 quizzes', icon: '🧠', unlocked: false },
+    { title: 'Speed Learner', description: 'Completed a course in under a week', icon: '⚡', unlocked: false },
   ]
 
   const handleMenuOpen = (event, course) => {
@@ -250,7 +251,7 @@ function Dashboard() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+        background: 'linear-gradient(135deg, #9c27b0 0%, #673ab7 50%, #3f51b5 100%)',
         backgroundSize: '400% 400%',
         animation: 'dashboardGradient 15s ease infinite',
         position: 'relative',
@@ -452,11 +453,16 @@ function Dashboard() {
                 textTransform: 'none',
                 fontWeight: 700,
                 fontSize: '1.1rem',
-                color: 'rgba(255,255,255,0.7)',
+                color: 'rgba(255,255,255,0.9)',
                 minHeight: 80,
                 px: 4,
                 transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
                 position: 'relative',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderBottom: 'none',
+                borderRadius: '12px 12px 0 0',
+                marginRight: 1,
+                background: 'rgba(255,255,255,0.05)',
                 '&::before': {
                   content: '""',
                   position: 'absolute',
@@ -471,6 +477,7 @@ function Dashboard() {
                 '&:hover': {
                   color: 'white',
                   transform: 'translateY(-2px)',
+                  background: 'rgba(255,255,255,0.15)',
                   '&::before': {
                     transform: 'translateX(100%)',
                   }
@@ -479,6 +486,7 @@ function Dashboard() {
                   color: 'white',
                   background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%)',
                   animation: 'dashboardGlow 2s ease-in-out infinite',
+                  borderBottom: '3px solid white',
                 }
               },
               '& .MuiTabs-indicator': {
@@ -490,6 +498,7 @@ function Dashboard() {
             }}
           >
             <Tab label="🎓 My Courses" />
+            <Tab label="🤖 AI Learning" />
             <Tab label="⚡ Recent Activity" />
             <Tab label="🏆 Achievements" />
           </Tabs>
@@ -513,50 +522,95 @@ function Dashboard() {
                 Continue Your Amazing Learning Journey
               </Typography>
               <Grid container spacing={4}>
-                {enrolledCourses.map((course, index) => (
-                  <Grid item xs={12} md={6} lg={4} key={course.id}>
+                {coursesLoading ? (
+                  // Loading state
+                  [...Array(3)].map((_, index) => (
+                    <Grid item xs={12} md={6} lg={4} key={index}>
+                      <Card
+                        sx={{
+                          borderRadius: 5,
+                          overflow: 'hidden',
+                          background: 'rgba(255,255,255,0.1)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          height: 400,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Typography sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                          Loading courses...
+                        </Typography>
+                      </Card>
+                    </Grid>
+                  ))
+                ) : coursesError ? (
+                  // Error state
+                  <Grid item xs={12}>
                     <Card
                       sx={{
                         borderRadius: 5,
-                        overflow: 'hidden',
                         background: 'rgba(255,255,255,0.1)',
                         backdropFilter: 'blur(20px)',
                         border: '1px solid rgba(255,255,255,0.2)',
-                        transition: 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
-                        opacity: isLoaded ? 1 : 0,
-                        transform: isLoaded ? 'translateY(0) rotateX(0)' : 'translateY(50px) rotateX(10deg)',
-                        transitionDelay: `${index * 0.2}s`,
-                        position: 'relative',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          background: 'linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)',
-                          transform: 'translateX(-100%)',
-                          transition: 'transform 0.6s',
-                        },
-                        '&:hover': {
-                          transform: 'translateY(-12px) rotateX(5deg) scale(1.03)',
-                          background: 'rgba(255,255,255,0.2)',
-                          boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
-                          '&::before': {
-                            transform: 'translateX(100%)',
-                          }
-                        },
+                        p: 4,
+                        textAlign: 'center',
                       }}
                     >
-                      <Box
+                      <Typography sx={{ color: 'rgba(255,255,255,0.9)', mb: 2 }}>
+                        Failed to load enrolled courses
+                      </Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                        {coursesError.message}
+                      </Typography>
+                    </Card>
+                  </Grid>
+                ) : enrolledCourses.length === 0 ? (
+                  // Empty state
+                  <Grid item xs={12}>
+                    <Card
+                      sx={{
+                        borderRadius: 5,
+                        background: 'rgba(255,255,255,0.1)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        p: 6,
+                        textAlign: 'center',
+                      }}
+                    >
+                      <Typography variant="h5" sx={{ color: 'rgba(255,255,255,0.9)', mb: 2 }}>
+                        No enrolled courses yet
+                      </Typography>
+                      <Typography sx={{ color: 'rgba(255,255,255,0.7)', mb: 4 }}>
+                        Start your learning journey by enrolling in a course!
+                      </Typography>
+                      <Button
+                        component={Link}
+                        to="/courses"
+                        variant="contained"
+                        size="large"
+                        sx={{ borderRadius: 3, px: 4 }}
+                      >
+                        Browse Courses
+                      </Button>
+                    </Card>
+                  </Grid>
+                ) : (
+                  enrolledCourses.map((course, index) => (
+                    <Grid item xs={12} md={6} lg={4} key={course._id}>
+                      <Card
                         sx={{
-                          height: 180,
-                          background: `linear-gradient(135deg, 
-                            ${course.id === '1' ? '#667eea, #764ba2' : 
-                              course.id === '2' ? '#4facfe, #00f2fe' : 
-                              '#fa709a, #fee140'})`,
-                          position: 'relative',
+                          borderRadius: 5,
                           overflow: 'hidden',
+                          background: 'rgba(255,255,255,0.1)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          transition: 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)',
+                          opacity: isLoaded ? 1 : 0,
+                          transform: isLoaded ? 'translateY(0) rotateX(0)' : 'translateY(50px) rotateX(10deg)',
+                          transitionDelay: `${index * 0.2}s`,
+                          position: 'relative',
                           '&::before': {
                             content: '""',
                             position: 'absolute',
@@ -564,174 +618,205 @@ function Dashboard() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            background: 'radial-gradient(circle at 30% 70%, rgba(255,255,255,0.3) 0%, transparent 50%)',
+                            background: 'linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)',
+                            transform: 'translateX(-100%)',
+                            transition: 'transform 0.6s',
                           },
-                          '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            top: -50,
-                            right: -50,
-                            width: 100,
-                            height: 100,
-                            background: 'rgba(255,255,255,0.1)',
-                            borderRadius: '50%',
-                            animation: 'dashboardFloat 4s ease-in-out infinite',
-                          }
+                          '&:hover': {
+                            transform: 'translateY(-12px) rotateX(5deg) scale(1.03)',
+                            background: 'rgba(255,255,255,0.2)',
+                            boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
+                            '&::before': {
+                              transform: 'translateX(100%)',
+                            }
+                          },
                         }}
                       >
-                        {/* Floating Elements */}
-                        <Box sx={{ position: 'absolute', top: 20, left: 20, animation: 'dashboardBounce 3s ease-in-out infinite' }}>
-                          <Typography sx={{ fontSize: '2rem' }}>📚</Typography>
-                        </Box>
-                        <Box sx={{ position: 'absolute', bottom: 20, right: 80, animation: 'dashboardFloat 2.5s ease-in-out infinite' }}>
-                          <Typography sx={{ fontSize: '1.5rem' }}>✨</Typography>
-                        </Box>
-
                         <Box
                           sx={{
-                            position: 'absolute',
-                            top: 16,
-                            right: 16,
-                            display: 'flex',
-                            gap: 1,
-                            zIndex: 2,
+                            height: 180,
+                            background: `linear-gradient(135deg, 
+                              ${index % 3 === 0 ? '#667eea, #764ba2' : 
+                                index % 3 === 1 ? '#4facfe, #00f2fe' : 
+                                '#fa709a, #fee140'})`,
+                            position: 'relative',
+                            overflow: 'hidden',
+                            '&::before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: 'radial-gradient(circle at 30% 70%, rgba(255,255,255,0.3) 0%, transparent 50%)',
+                            },
+                            '&::after': {
+                              content: '""',
+                              position: 'absolute',
+                              top: -50,
+                              right: -50,
+                              width: 100,
+                              height: 100,
+                              background: 'rgba(255,255,255,0.1)',
+                              borderRadius: '50%',
+                              animation: 'dashboardFloat 4s ease-in-out infinite',
+                            }
                           }}
                         >
-                          <Chip
-                            label={course.category}
-                            size="small"
-                            sx={{
-                              background: 'rgba(255,255,255,0.25)',
-                              backdropFilter: 'blur(10px)',
-                              color: 'white',
-                              fontWeight: 700,
-                              border: '1px solid rgba(255,255,255,0.3)',
-                              animation: 'dashboardGlow 2s ease-in-out infinite',
-                            }}
-                          />
-                          <IconButton
-                            size="small"
-                            onClick={(e) => handleMenuOpen(e, course)}
-                            sx={{
-                              background: 'rgba(255,255,255,0.25)',
-                              backdropFilter: 'blur(10px)',
-                              color: 'white',
-                              border: '1px solid rgba(255,255,255,0.3)',
-                              '&:hover': { 
-                                background: 'rgba(255,255,255,0.4)',
-                                transform: 'scale(1.1)',
-                              },
-                            }}
-                          >
-                            <MoreVert />
-                          </IconButton>
-                        </Box>
+                          {/* Floating Elements */}
+                          <Box sx={{ position: 'absolute', top: 20, left: 20, animation: 'dashboardBounce 3s ease-in-out infinite' }}>
+                            <Typography sx={{ fontSize: '2rem' }}>📚</Typography>
+                          </Box>
+                          <Box sx={{ position: 'absolute', bottom: 20, right: 80, animation: 'dashboardFloat 2.5s ease-in-out infinite' }}>
+                            <Typography sx={{ fontSize: '1.5rem' }}>✨</Typography>
+                          </Box>
 
-                        {/* Progress Ring */}
-                        <Box
-                          sx={{
-                            position: 'absolute',
-                            bottom: 20,
-                            left: 20,
-                            width: 60,
-                            height: 60,
-                            borderRadius: '50%',
-                            background: 'conic-gradient(white 0deg, white ' + (course.progress * 3.6) + 'deg, rgba(255,255,255,0.3) ' + (course.progress * 3.6) + 'deg)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            animation: 'dashboardRotate 10s linear infinite',
-                          }}
-                        >
                           <Box
                             sx={{
-                              width: 45,
-                              height: 45,
+                              position: 'absolute',
+                              top: 16,
+                              right: 16,
+                              display: 'flex',
+                              gap: 1,
+                              zIndex: 2,
+                            }}
+                          >
+                            <Chip
+                              label={course.category}
+                              size="small"
+                              sx={{
+                                background: 'rgba(255,255,255,0.25)',
+                                backdropFilter: 'blur(10px)',
+                                color: 'white',
+                                fontWeight: 700,
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                animation: 'dashboardGlow 2s ease-in-out infinite',
+                              }}
+                            />
+                            <IconButton
+                              size="small"
+                              onClick={(e) => handleMenuOpen(e, course)}
+                              sx={{
+                                background: 'rgba(255,255,255,0.25)',
+                                backdropFilter: 'blur(10px)',
+                                color: 'white',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                '&:hover': { 
+                                  background: 'rgba(255,255,255,0.4)',
+                                  transform: 'scale(1.1)',
+                                },
+                              }}
+                            >
+                              <MoreVert />
+                            </IconButton>
+                          </Box>
+
+                          {/* Progress Ring */}
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              bottom: 20,
+                              left: 20,
+                              width: 60,
+                              height: 60,
                               borderRadius: '50%',
-                              background: 'rgba(0,0,0,0.2)',
+                              background: 'conic-gradient(white 0deg, white ' + ((course.enrollment?.progress || 0) * 3.6) + 'deg, rgba(255,255,255,0.3) ' + ((course.enrollment?.progress || 0) * 3.6) + 'deg)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              color: 'white',
-                              fontWeight: 700,
-                              fontSize: '0.9rem',
+                              animation: 'dashboardRotate 10s linear infinite',
                             }}
                           >
-                            {course.progress}%
+                            <Box
+                              sx={{
+                                width: 45,
+                                height: 45,
+                                borderRadius: '50%',
+                                background: 'rgba(0,0,0,0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                fontWeight: 700,
+                                fontSize: '0.9rem',
+                              }}
+                            >
+                              {course.enrollment?.progress || 0}%
+                            </Box>
                           </Box>
                         </Box>
-                      </Box>
 
-                    <CardContent sx={{ p: 3 }}>
-                      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, lineHeight: 1.3 }}>
-                        {course.title}
-                      </Typography>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
-                          {course.instructor.charAt(0)}
-                        </Avatar>
-                        <Typography variant="body2" color="text.secondary">
-                          {course.instructor}
+                      <CardContent sx={{ p: 3 }}>
+                        <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, lineHeight: 1.3 }}>
+                          {course.title}
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
-                          <Star sx={{ fontSize: '1rem', color: '#ffd700', mr: 0.5 }} />
-                          <Typography variant="body2">{course.rating}</Typography>
-                        </Box>
-                      </Box>
 
-                      <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                          <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
+                            {course.tutor?.name?.charAt(0) || 'T'}
+                          </Avatar>
                           <Typography variant="body2" color="text.secondary">
-                            Progress
-                          </Typography>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                            {course.progress}%
+                            {course.tutor?.name || 'Tutor'}
                           </Typography>
                         </Box>
-                        <LinearProgress
-                          variant="determinate"
-                          value={course.progress}
-                          sx={{
-                            height: 8,
-                            borderRadius: 4,
-                            bgcolor: 'grey.200',
-                            '& .MuiLinearProgress-bar': {
+
+                        <Box sx={{ mb: 2 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                            <Typography variant="body2" color="text.secondary">
+                              Progress
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              {course.enrollment?.progress || 0}%
+                            </Typography>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={course.enrollment?.progress || 0}
+                            sx={{
+                              height: 8,
                               borderRadius: 4,
-                              bgcolor: course.progress === 100 ? '#4caf50' : '#667eea',
-                            },
+                              bgcolor: 'grey.200',
+                              '& .MuiLinearProgress-bar': {
+                                borderRadius: 4,
+                                bgcolor: (course.enrollment?.progress || 0) === 100 ? '#4caf50' : '#667eea',
+                              },
+                            }}
+                          />
+                        </Box>
+
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                          Enrolled: {new Date(course.enrollment?.enrolledAt).toLocaleDateString()}
+                        </Typography>
+
+                        {course.enrollment?.completedAt && (
+                          <Typography variant="caption" sx={{ color: '#4caf50', fontWeight: 500 }}>
+                            ✓ Completed on {new Date(course.enrollment.completedAt).toLocaleDateString()}
+                          </Typography>
+                        )}
+                      </CardContent>
+
+                      <Box sx={{ p: 3, pt: 0 }}>
+                        <Button
+                          component={Link}
+                          to={`/courses/${course._id}`}
+                          variant="contained"
+                          fullWidth
+                          startIcon={<PlayArrow />}
+                          sx={{
+                            borderRadius: 2,
+                            py: 1.5,
+                            fontWeight: 600,
+                            bgcolor: '#667eea',
+                            '&:hover': { bgcolor: '#5a6fd8' },
                           }}
-                        />
+                        >
+                          {course.enrollment?.progress === 100 ? 'Review Course' : 'Continue Learning'}
+                        </Button>
                       </Box>
-
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Next: {course.nextLesson}
-                      </Typography>
-
-                      <Typography variant="caption" color="text.secondary">
-                        Last accessed {course.lastAccessed}
-                      </Typography>
-                    </CardContent>
-
-                    <Box sx={{ p: 3, pt: 0 }}>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        startIcon={<PlayArrow />}
-                        sx={{
-                          borderRadius: 2,
-                          py: 1.5,
-                          fontWeight: 600,
-                          bgcolor: '#667eea',
-                          '&:hover': { bgcolor: '#5a6fd8' },
-                        }}
-                      >
-                        Continue Learning
-                      </Button>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
+                    </Card>
+                  </Grid>
+                ))
+              )}
             </Grid>
 
             <Box sx={{ textAlign: 'center', mt: 4 }}>
@@ -748,8 +833,301 @@ function Dashboard() {
           </Box>
         )}
 
-        {/* Recent Activity Tab */}
+        {/* AI Learning Tab */}
         {activeTab === 1 && (
+          <Box sx={{ p: 4 }}>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                mb: 4, 
+                fontWeight: 800,
+                background: 'linear-gradient(45deg, #ffffff 30%, #f0f8ff 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textAlign: 'center',
+                animation: 'dashboardShimmer 3s ease-in-out infinite',
+              }}
+            >
+              AI-Powered Learning Experience
+            </Typography>
+
+            {/* AI-Generated Courses Section */}
+            <Box sx={{ mb: 6 }}>
+              <Typography variant="h5" sx={{ mb: 3, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AutoAwesome sx={{ color: 'primary.main' }} />
+                AI-Generated Courses
+              </Typography>
+
+              {aiCoursesLoading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Loading AI courses...
+                  </Typography>
+                </Box>
+              ) : aiCourses?.length > 0 ? (
+                <Grid container spacing={3}>
+                  {aiCourses.slice(0, 6).map((course, index) => (
+                    <Grid item xs={12} md={6} lg={4} key={course._id}>
+                      <Card
+                        sx={{
+                          borderRadius: 4,
+                          background: 'rgba(255,255,255,0.1)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          transition: 'all 0.3s ease',
+                          position: 'relative',
+                          overflow: 'visible',
+                          '&:hover': {
+                            transform: 'translateY(-8px)',
+                            background: 'rgba(255,255,255,0.15)',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                          },
+                        }}
+                      >
+                        {/* AI Badge */}
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: -10,
+                            right: -10,
+                            bgcolor: 'linear-gradient(45deg, #667eea, #764ba2)',
+                            color: 'white',
+                            px: 2,
+                            py: 0.5,
+                            borderRadius: 2,
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            zIndex: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5,
+                          }}
+                        >
+                          <Psychology sx={{ fontSize: '1rem' }} />
+                          AI
+                        </Box>
+
+                        <Box
+                          sx={{
+                            height: 140,
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <AutoAwesome sx={{ fontSize: '3rem', color: 'white', opacity: 0.8 }} />
+                        </Box>
+
+                        <CardContent sx={{ p: 3 }}>
+                          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, lineHeight: 1.3 }}>
+                            {course.title}
+                          </Typography>
+
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                            <Chip
+                              label={course.category}
+                              size="small"
+                              sx={{
+                                background: 'rgba(102, 126, 234, 0.2)',
+                                color: 'white',
+                                fontWeight: 500,
+                              }}
+                            />
+                          </Box>
+
+                          <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255,255,255,0.8)', lineHeight: 1.4 }}>
+                            {course.description.length > 120 
+                              ? course.description.substring(0, 120) + '...' 
+                              : course.description}
+                          </Typography>
+
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                              {course.sections?.length || 0} sections
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                              ${course.price || 'Free'}
+                            </Typography>
+                          </Box>
+                        </CardContent>
+
+                        <Box sx={{ p: 3, pt: 0 }}>
+                          <Button
+                            component={Link}
+                            to={`/course-viewer/${course._id}`}
+                            variant="contained"
+                            fullWidth
+                            startIcon={<Rocket />}
+                            sx={{
+                              borderRadius: 2,
+                              py: 1.5,
+                              fontWeight: 600,
+                              background: 'linear-gradient(45deg, #9c27b0, #673ab7)',
+                              '&:hover': {
+                                background: 'linear-gradient(45deg, #8e24aa, #5e35b1)',
+                              },
+                            }}
+                          >
+                            Start Learning
+                          </Button>
+                        </Box>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Card
+                  sx={{
+                    borderRadius: 4,
+                    background: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    p: 4,
+                    textAlign: 'center',
+                  }}
+                >
+                  <AutoAwesome sx={{ fontSize: '4rem', color: 'rgba(255,255,255,0.3)', mb: 2 }} />
+                  <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.9)', mb: 2 }}>
+                    No AI Courses Available Yet
+                  </Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.7)', mb: 3 }}>
+                    AI-generated courses are being created by our tutors. Check back soon!
+                  </Typography>
+                </Card>
+              )}
+            </Box>
+
+            {/* Personalized Learning Path */}
+            {learningPathData && (
+              <Box sx={{ mb: 6 }}>
+                <Typography variant="h5" sx={{ mb: 3, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Timeline sx={{ color: 'primary.main' }} />
+                  Your AI Learning Path
+                </Typography>
+
+                <Card
+                  sx={{
+                    borderRadius: 4,
+                    background: 'rgba(255,255,255,0.1)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    p: 3,
+                  }}
+                >
+                  <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+                    Recommended Learning Journey
+                  </Typography>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body1" sx={{ mb: 2, color: 'rgba(255,255,255,0.9)' }}>
+                      {learningPathData.schedule?.description || 'Based on your current progress and interests, here\'s your personalized learning path:'}
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                      <Chip
+                        label={`${learningPathData.schedule?.weeklyHours || 10} hours/week`}
+                        sx={{ background: 'rgba(102, 126, 234, 0.2)', color: 'white' }}
+                      />
+                      <Chip
+                        label={`${learningPathData.schedule?.sessionsPerWeek || 3} sessions/week`}
+                        sx={{ background: 'rgba(102, 126, 234, 0.2)', color: 'white' }}
+                      />
+                    </Box>
+                  </Box>
+
+                  {learningPathData.courses && learningPathData.courses.length > 0 && (
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+                        Recommended Courses:
+                      </Typography>
+                      <List>
+                        {learningPathData.courses.map((course, index) => (
+                          <ListItem key={index} sx={{ px: 0, py: 1 }}>
+                            <ListItemIcon>
+                              <Box
+                                sx={{
+                                  width: 32,
+                                  height: 32,
+                                  borderRadius: '50%',
+                                  background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  color: 'white',
+                                  fontWeight: 600,
+                                  fontSize: '0.9rem',
+                                }}
+                              >
+                                {index + 1}
+                              </Box>
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={course.title}
+                              secondary={`${course.estimatedHours} hours • ${course.description}`}
+                              primaryTypographyProps={{
+                                sx: { color: 'white', fontWeight: 500 },
+                              }}
+                              secondaryTypographyProps={{
+                                sx: { color: 'rgba(255,255,255,0.7)' },
+                              }}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Box>
+                  )}
+                </Card>
+              </Box>
+            )}
+
+            {/* Request Custom AI Course */}
+            <Box>
+              <Typography variant="h5" sx={{ mb: 3, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Psychology sx={{ color: 'primary.main' }} />
+                Request Custom AI Course
+              </Typography>
+
+              <Card
+                sx={{
+                  borderRadius: 4,
+                  background: 'rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  p: 4,
+                  textAlign: 'center',
+                }}
+              >
+                <Psychology sx={{ fontSize: '4rem', color: 'rgba(255,255,255,0.3)', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.9)', mb: 2 }}>
+                  Want a Course on a Specific Topic?
+                </Typography>
+                <Typography sx={{ color: 'rgba(255,255,255,0.7)', mb: 3 }}>
+                  Our AI can generate custom courses tailored to your learning needs. Contact our tutors to request a personalized AI-generated course.
+                </Typography>
+                <Button
+                  variant="outlined"
+                  startIcon={<AutoAwesome />}
+                  sx={{
+                    borderColor: 'rgba(255,255,255,0.3)',
+                    color: 'white',
+                    '&:hover': {
+                      borderColor: 'white',
+                      background: 'rgba(255,255,255,0.1)',
+                    },
+                  }}
+                >
+                  Request Custom Course
+                </Button>
+              </Card>
+            </Box>
+          </Box>
+        )}
+
+        {/* Recent Activity Tab */}
+        {activeTab === 2 && (
           <Box sx={{ p: 3 }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
               Recent Activity
@@ -784,7 +1162,7 @@ function Dashboard() {
         )}
 
         {/* Achievements Tab */}
-        {activeTab === 2 && (
+        {activeTab === 3 && (
           <Box sx={{ p: 3 }}>
             <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
               Achievements
