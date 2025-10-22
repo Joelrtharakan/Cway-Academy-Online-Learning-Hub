@@ -5,18 +5,29 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import App from './App'
-import theme from './theme'
+import theme, { darkTheme } from './theme'
+import { useUIStore } from './store'
 
 const queryClient = new QueryClient()
+
+// Theme provider component that uses Zustand store
+const ThemedApp = () => {
+  const { theme: themeMode } = useUIStore()
+  const currentTheme = themeMode === 'dark' ? darkTheme : theme
+
+  return (
+    <ThemeProvider theme={currentTheme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
+  )
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
+        <ThemedApp />
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>

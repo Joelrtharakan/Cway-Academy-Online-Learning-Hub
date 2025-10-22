@@ -80,7 +80,7 @@ function Home() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
             zIndex: 0,
           }
         }}
@@ -99,9 +99,11 @@ function Home() {
                   lineHeight: 1.1,
                   color: 'white',
                   maxWidth: '900px',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
                   '& .highlight': {
-                    color: '#e5e7eb',
+                    color: '#fbbf24',
                     fontWeight: 800,
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.7)',
                   }
                 }}
               >
@@ -117,10 +119,11 @@ function Home() {
                 variant="h5"
                 sx={{
                   mb: 6,
-                  color: '#f3f4f6',
+                  color: 'rgba(255, 255, 255, 0.95)',
                   fontWeight: 400,
                   maxWidth: '600px',
                   lineHeight: 1.5,
+                  textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                 }}
               >
                 Access high-quality courses, connect with expert tutors, and track your progress all in one place.
@@ -130,32 +133,39 @@ function Home() {
               <Paper
                 elevation={0}
                 sx={{
-                  p: 3,
-                  borderRadius: 2,
-                  background: 'white',
-                  border: '1px solid #e5e5e5',
-                  maxWidth: '700px',
+                  p: 4,
+                  borderRadius: 3,
+                  background: 'rgba(17, 24, 39, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  border: '2px solid rgba(255, 255, 255, 0.1)',
+                  maxWidth: '750px',
                   mb: 6,
+                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                  position: 'relative',
                 }}
               >
                 {/* Tab Navigation */}
                 <Box sx={{ mb: 3 }}>
                   <Stack direction="row" spacing={0}>
-                    {['Find Tutors', 'Browse Courses'].map((tab, index) => (
+                    {['Browse Courses'].map((tab, index) => (
                       <Button
                         key={tab}
                         onClick={() => setActiveTab(index)}
                         sx={{
                           px: 4,
                           py: 1.5,
-                          borderRadius: 0,
-                          borderBottom: activeTab === index ? 2 : 0,
-                          borderColor: 'white',
-                          color: activeTab === index ? 'white' : '#d1d5db',
-                          fontWeight: activeTab === index ? 600 : 400,
+                          borderRadius: 2,
+                          borderBottom: activeTab === index ? 3 : 0,
+                          borderColor: '#fbbf24',
+                          color: activeTab === index ? '#fbbf24' : 'rgba(255, 255, 255, 0.8)',
+                          fontWeight: activeTab === index ? 600 : 500,
                           textTransform: 'none',
+                          backgroundColor: activeTab === index ? 'rgba(251, 191, 36, 0.1)' : 'transparent',
+                          transition: 'all 0.3s ease',
                           '&:hover': {
-                            background: 'rgba(255,255,255,0.1)',
+                            backgroundColor: 'rgba(251, 191, 36, 0.15)',
+                            color: '#fbbf24',
+                            transform: 'translateY(-1px)',
                           }
                         }}
                       >
@@ -169,51 +179,72 @@ function Home() {
                 <Stack direction="row" spacing={2} alignItems="center">
                   <TextField
                     fullWidth
-                    placeholder={activeTab === 0 ? "Mathematics, Physics, Programming..." : "Web Development, Data Science, Design..."}
+                    placeholder="Web Development, Data Science, Design..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     variant="outlined"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Search sx={{ color: '#64748b' }} />
+                          <Search sx={{ color: '#6b7280' }} />
                         </InputAdornment>
                       ),
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
+                        borderRadius: 3,
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        border: '2px solid rgba(255, 255, 255, 0.2)',
+                        transition: 'all 0.3s ease',
                         '& fieldset': {
-                          borderColor: '#e2e8f0',
+                          border: 'none',
                         },
-                        '&:hover fieldset': {
-                          borderColor: '#22c55e',
+                        '&:hover': {
+                          backgroundColor: 'white',
+                          borderColor: '#fbbf24',
+                          boxShadow: '0 4px 12px rgba(251, 191, 36, 0.2)',
                         },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#22c55e',
+                        '&.Mui-focused': {
+                          backgroundColor: 'white',
+                          borderColor: '#fbbf24',
+                          boxShadow: '0 0 0 3px rgba(251, 191, 36, 0.15)',
                         },
+                      },
+                      '& .MuiOutlinedInput-input': {
+                        color: '#1f2937',
+                        fontSize: '1rem',
+                        padding: '16px 14px',
+                        '&::placeholder': {
+                          color: '#6b7280',
+                          opacity: 0.8,
+                        }
                       }
                     }}
                   />
-                  <Button
+                                    <Button
                     variant="contained"
                     startIcon={<ArrowForward />}
                     sx={{
-                      px: 4,
+                      px: 5,
                       py: 2,
-                      background: 'white',
-                      color: '#111827',
-                      borderRadius: 2,
+                      background: '#fbbf24',
+                      color: '#1f2937',
+                      borderRadius: 3,
                       fontWeight: 600,
+                      fontSize: '1rem',
                       textTransform: 'none',
-                      boxShadow: 'none',
+                      boxShadow: '0 8px 25px rgba(251, 191, 36, 0.4)',
+                      border: '2px solid rgba(251, 191, 36, 0.3)',
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        background: '#f9fafb',
-                        boxShadow: 'none',
+                        background: '#f59e0b',
+                        boxShadow: '0 12px 35px rgba(251, 191, 36, 0.6)',
+                        transform: 'translateY(-2px)',
+                        borderColor: '#fbbf24',
                       }
                     }}
                     component={Link}
-                    to={activeTab === 0 ? "/tutors" : "/courses"}
+                    to="/courses"
                   >
                     Search
                   </Button>
@@ -225,9 +256,10 @@ function Home() {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: '#d1d5db',
+                    color: 'rgba(255, 255, 255, 0.9)',
                     mb: 3,
                     fontSize: '0.9rem',
+                    fontWeight: 500,
                   }}
                 >
                   Trusted by
@@ -249,9 +281,10 @@ function Home() {
                       key={company}
                       variant="h6"
                       sx={{
-                        color: '#e5e7eb',
-                        fontWeight: 500,
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        fontWeight: 600,
                         fontSize: '1.1rem',
+                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
                       }}
                     >
                       {company}
