@@ -43,7 +43,7 @@ function Certificates() {
   // Fetch user's certificates
   const { data: certificates, refetch } = useQuery({
     queryKey: ['certificates'],
-    queryFn: () => api.get('/api/certificates'),
+    queryFn: () => api.get('/api/certificates/my-certificates'),
   })
 
   // Fetch all certificates (admin)
@@ -290,6 +290,13 @@ function Certificates() {
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: '0.75rem', color: 'text.secondary' }}>
                   Verification Code: {selectedCertificate.verificationCode}
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 2, fontWeight: 500 }}>
+                  This certificate is awarded in recognition of the successful completion of the course requirements.<br />
+                  Cway Academy - Empowering Learning Through Innovation
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 2, fontWeight: 600, color: 'primary.main' }}>
+                  Certificate ID: {selectedCertificate.verificationCode}
                 </Typography>
               </Box>
             </Box>

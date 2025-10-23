@@ -1137,7 +1137,7 @@ function CoursePlayer() {
           color: 'white',
           padding: '16px 24px',
           borderRadius: '8px',
-          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 10px 15px -5px rgba(0, 0, 0, 0.1)',
           zIndex: 1000,
           display: 'flex',
           alignItems: 'center',
@@ -1252,22 +1252,42 @@ function CoursePlayer() {
               <div style={{ fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '16px' }}>
                 "{course?.title}"
               </div>
-              <div style={{ fontSize: '0.9rem', opacity: '0.8' }}>
+              <div style={{ fontSize: '0.9rem', opacity: '0.8', marginBottom: '16px' }}>
                 {lessons.length} lessons • Completed on {new Date().toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'long', 
                   day: 'numeric' 
                 })}
               </div>
+              <div style={{ fontSize: '0.95rem', color: '#fff', marginBottom: '8px', fontWeight: '500' }}>
+                This certificate is awarded in recognition of the successful completion of the course requirements.<br/>
+                Cway Academy - Empowering Learning Through Innovation
+              </div>
+              <div style={{ fontSize: '0.95rem', color: '#fff', marginTop: '8px', fontWeight: '600', background: 'rgba(0,0,0,0.08)', borderRadius: '4px', display: 'inline-block', padding: '4px 12px' }}>
+                Certificate ID: CA-{Date.now()}
+              </div>
             </div>
             
-            <div style={{ marginBottom: '24px', color: '#6b7280', fontSize: '0.9rem', lineHeight: '1.5' }}>
-              <p>Your certificate will be downloaded as a professional PDF file. The certificate includes your name, course details, completion date, and a unique certificate ID.</p>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '24px' }}>
               <button
-                onClick={handleGenerateCertificate}
+                onClick={() => {
+                  const certificateData = {
+                    studentName: user?.name || 'Student',
+                    courseName: course?.title,
+                    completionDate: new Date().toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }),
+                    courseId: courseId,
+                    instructorName: course?.instructor || 'Cway Academy Team',
+                    totalLessons: lessons.length,
+                    completionTimestamp: new Date().toISOString(),
+                    lessonCount: lessons.length
+                  }
+
+                  generateCertificate(certificateData, () => setShowCertificate(false))
+                }}
                 style={{
                   backgroundColor: '#2563eb',
                   color: 'white',
@@ -1280,7 +1300,7 @@ function CoursePlayer() {
                   minWidth: '160px'
                 }}
               >
-                � Download PDF Certificate
+                📥 Download PDF Certificate
               </button>
               <button
                 onClick={() => setShowCertificate(false)}
