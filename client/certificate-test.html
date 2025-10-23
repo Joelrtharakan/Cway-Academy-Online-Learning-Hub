@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <h1>Certificate Test</h1>
+    <button id="generateBtn">Generate Certificate</button>
+
+    <script>
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            // Test certificate data
+            const certificateData = {
+                studentName: 'John Doe',
+                courseName: 'Test Course',
+                completionDate: 'December 15, 2024',
+                courseId: 'test-123',
+                instructorName: 'Test Instructor',
+                totalLessons: 10,
+                completionTimestamp: new Date().toISOString()
+            }
+
+            // Create certificate content HTML with inline styles
+            const certificateContentHTML = `
+                <div style="
+                    width: 100%;
+                    height: 100%;
+                    border: 4px solid #1a365d;
+                    padding: 25px;
+                    display: flex;
+                    flex-direction: column;
+                    background: white;
+                    position: relative;
+                    box-sizing: border-box;
+                    font-family: 'Times New Roman', Times, serif;
+                ">
+                    <div style="
+                        text-align: center;
+                        margin-bottom: 15px;
+                        flex-shrink: 0;
+                    ">
+                        <div style="
+                            font-size: 50px;
+                            margin-bottom: 10px;
+                            color: #1a365d;
+                        ">🎓</div>
+                        <div style="
+                            font-size: 36px;
+                            font-weight: bold;
+                            text-align: center;
+                            margin-bottom: 8px;
+                            color: #1a365d;
+                            text-transform: uppercase;
+                            letter-spacing: 2px;
+                            border-bottom: 2px solid #1a365d;
+                            padding-bottom: 8px;
+                        ">Certificate of Completion</div>
+                        <div style="
+                            font-size: 14px;
+                            color: #4a5568;
+                            margin-bottom: 20px;
+                            font-style: italic;
+                        ">Awarded by Cway Academy</div>
+                    </div>
+
+                    <div style="
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        padding: 10px 0;
+                    ">
+                        <div style="
+                            font-size: 16px;
+                            margin: 8px 0;
+                            color: #2d3748;
+                        ">This certifies that</div>
+                        <div style="
+                            font-size: 40px;
+                            font-weight: bold;
+                            margin: 15px 0;
+                            color: #1a365d;
+                            font-style: italic;
+                            text-decoration: underline;
+                            text-decoration-color: #e53e3e;
+                            text-decoration-thickness: 2px;
+                            line-height: 1.2;
+                        ">${certificateData.studentName}</div>
+                        <div style="
+                            font-size: 16px;
+                            margin-bottom: 10px;
+                            color: #2d3748;
+                        ">has successfully completed the course</div>
+                        <div style="
+                            font-size: 26px;
+                            margin: 10px 0;
+                            color: #2563eb;
+                            font-weight: bold;
+                            font-style: italic;
+                            line-height: 1.3;
+                        ">"${certificateData.courseName}"</div>
+                        <div style="
+                            font-size: 14px;
+                            color: #4a5568;
+                            margin: 8px 0 15px 0;
+                            font-style: italic;
+                        ">A comprehensive course consisting of ${certificateData.totalLessons} lessons</div>
+                        <div style="
+                            font-size: 16px;
+                            margin: 10px 0;
+                            color: #2d3748;
+                            font-weight: bold;
+                        ">Completion Date: ${certificateData.completionDate}</div>
+                    </div>
+
+                    <div style="
+                        display: flex;
+                        justify-content: space-around;
+                        width: 100%;
+                        margin-top: 25px;
+                        padding: 0 40px;
+                        flex-shrink: 0;
+                    ">
+                        <div style="
+                            text-align: center;
+                            width: 200px;
+                        ">
+                            <div style="
+                                width: 100%;
+                                height: 2px;
+                                background: #1a365d;
+                                margin: 20px 0 6px 0;
+                            "></div>
+                            <div style="
+                                font-size: 12px;
+                                color: #4a5568;
+                                margin-bottom: 4px;
+                                font-weight: bold;
+                            ">Course Instructor</div>
+                            <div style="
+                                font-size: 14px;
+                                font-weight: bold;
+                                color: #1a365d;
+                            ">${certificateData.instructorName}</div>
+                        </div>
+                        <div style="
+                            text-align: center;
+                            width: 200px;
+                        ">
+                            <div style="
+                                width: 100%;
+                                height: 2px;
+                                background: #1a365d;
+                                margin: 20px 0 6px 0;
+                            "></div>
+                            <div style="
+                                font-size: 12px;
+                                color: #4a5568;
+                                margin-bottom: 4px;
+                                font-weight: bold;
+                            ">Academic Director</div>
+                            <div style="
+                                font-size: 14px;
+                                font-weight: bold;
+                                color: #1a365d;
+                            ">Cway Academy</div>
+                        </div>
+                    </div>
+
+                    <div style="
+                        text-align: center;
+                        margin-top: 15px;
+                        font-size: 11px;
+                        color: #718096;
+                        line-height: 1.3;
+                        flex-shrink: 0;
+                    ">
+                        This certificate is awarded in recognition of the successful completion of the course requirements.<br>
+                        Cway Academy - Empowering Learning Through Innovation
+                    </div>
+
+                    <div style="
+                        position: absolute;
+                        bottom: 12px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 10px;
+                        color: #a0aec0;
+                        background: rgba(255, 255, 255, 0.9);
+                        padding: 4px 8px;
+                        border-radius: 3px;
+                        border: 1px solid #e2e8f0;
+                    ">
+                        Certificate ID: ${certificateData.courseId}-${certificateData.completionTimestamp.split('T')[0].replace(/-/g, '')}
+                    </div>
+                </div>
+            `
+
+            // Create PDF container
+            const pdfContainer = document.createElement('div')
+            pdfContainer.style.position = 'fixed'
+            pdfContainer.style.left = '-9999px'
+            pdfContainer.style.top = '0'
+            pdfContainer.style.width = '842px'
+            pdfContainer.style.height = '595px'
+            pdfContainer.style.backgroundColor = 'white'
+            pdfContainer.style.zIndex = '-1'
+            pdfContainer.style.fontFamily = "'Times New Roman', Times, serif"
+            pdfContainer.innerHTML = certificateContentHTML
+            document.body.appendChild(pdfContainer)
+
+            // Force layout calculation
+            pdfContainer.offsetHeight
+
+            setTimeout(() => {
+                const options = {
+                    margin: 0,
+                    filename: `CwayAcademy_Certificate_${certificateData.studentName.replace(/\s+/g, '_')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        width: 842,
+                        height: 595,
+                        logging: true,
+                        letterRendering: true,
+                        scrollX: 0,
+                        scrollY: 0,
+                        windowWidth: 842,
+                        windowHeight: 595
+                    },
+                    jsPDF: {
+                        unit: 'px',
+                        format: [842, 595],
+                        orientation: 'landscape',
+                        compress: true,
+                        putOnlyUsedFonts: true,
+                        floatPrecision: 16
+                    }
+                }
+
+                html2pdf()
+                    .set(options)
+                    .from(pdfContainer)
+                    .save()
+                    .then(() => {
+                        document.body.removeChild(pdfContainer)
+                        alert('PDF generated successfully!')
+                    })
+                    .catch((error) => {
+                        console.error('PDF generation error:', error)
+                        document.body.removeChild(pdfContainer)
+                        alert('PDF generation failed: ' + error.message)
+                    })
+            }, 500)
+        })
+    </script>
+</body>
+</html>
