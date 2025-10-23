@@ -96,6 +96,23 @@ function Layout() {
               Courses
             </Button>
             {isAuthenticated && (
+              <Button
+                component={Link}
+                to="/dashboard"
+                sx={{
+                  color: 'text.secondary',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  '&:hover': {
+                    color: 'text.primary',
+                    bgcolor: 'transparent',
+                  }
+                }}
+              >
+                Dashboard
+              </Button>
+            )}
+            {isAuthenticated && (
               <>
                 <Button
                   component={Link}

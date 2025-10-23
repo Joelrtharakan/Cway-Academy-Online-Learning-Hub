@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import {
   Box,
   Container,
@@ -31,23 +30,18 @@ import {
   AccessTime,
   EmojiEvents,
 } from '@mui/icons-material'
-import api from '../api/index.js'
+import mockCourses from '../mock/mockCourses'
 
 function Home() {
   const [activeTab, setActiveTab] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoaded, setIsLoaded] = useState(false)
 
-  const { data: courses, isLoading, error } = useQuery({
-    queryKey: ['featured-courses'],
-    queryFn: () => api.get('/api/courses?limit=6'),
-  })
-
   useEffect(() => {
     setIsLoaded(true)
   }, [])
 
-  const featuredCourses = courses?.courses || []
+  const featuredCourses = mockCourses.slice(0, 6)
 
   const stats = [
     { label: 'Active Students', value: '50,000+', icon: <People /> },
@@ -357,73 +351,50 @@ function Home() {
           </Box>
 
           <Grid container spacing={4}>
-            {isLoading ? (
-              // Loading skeleton
-              Array.from({ length: 6 }).map((_, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card
-                    elevation={2}
+            {featuredCourses.map((course) => (
+              <Grid item xs={12} sm={6} md={4} key={course.id}>
+                <Card
+                  elevation={2}
+                  sx={{
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
+                    }
+                  }}
+                >
+                  <Box
                     sx={{
-                      borderRadius: 3,
+                      height: 160,
+                      position: 'relative',
                       overflow: 'hidden',
-                      height: 400,
                     }}
                   >
-                    <Box
-                      sx={{
-                        height: 160,
-                        background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                    <img
+                      src={course.thumbnail}
+                      alt={course.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
                       }}
-                    >
-                      <Typography variant="h4" sx={{ color: '#9ca3af' }}>
-                        📚
-                      </Typography>
-                    </Box>
-                    <CardContent sx={{ p: 3 }}>
-                      <Box sx={{ height: 24, bgcolor: '#f3f4f6', borderRadius: 1, mb: 2 }} />
-                      <Box sx={{ height: 16, bgcolor: '#f3f4f6', borderRadius: 1, mb: 1, width: '60%' }} />
-                      <Box sx={{ height: 16, bgcolor: '#f3f4f6', borderRadius: 1, width: '40%' }} />
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))
-            ) : error ? (
-              // Error state
-              <Grid item xs={12}>
-                <Box sx={{ textAlign: 'center', py: 8 }}>
-                  <Typography variant="h6" color="error" sx={{ mb: 2 }}>
-                    Failed to load courses
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Please try refreshing the page
-                  </Typography>
-                </Box>
-              </Grid>
-            ) : (
-              // Actual courses
-              featuredCourses.slice(0, 6).map((course) => (
-                <Grid item xs={12} sm={6} md={4} key={course._id}>
-                  <Card
-                    elevation={2}
-                    sx={{
-                      borderRadius: 3,
-                      overflow: 'hidden',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
-                      }
-                    }}
-                  >
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
                     <Box
                       sx={{
-                        height: 160,
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        position: 'relative',
-                        display: 'flex',
+                        display: 'none',
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}
@@ -431,76 +402,76 @@ function Home() {
                       <Typography variant="h4" sx={{ color: 'white' }}>
                         📚
                       </Typography>
-                      <Chip
-                        label={course.category}
-                        size="small"
-                        sx={{
-                          position: 'absolute',
-                          top: 12,
-                          right: 12,
-                          bgcolor: 'rgba(255,255,255,0.9)',
-                          fontWeight: 600,
-                        }}
-                      />
+                    </Box>
+                    <Chip
+                      label={course.category}
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                        bgcolor: 'rgba(255,255,255,0.9)',
+                        fontWeight: 600,
+                      }}
+                    />
+                  </Box>
+
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, lineHeight: 1.3 }}>
+                      {course.title}
+                    </Typography>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
+                        {course.tutor?.name?.charAt(0) || 'T'}
+                      </Avatar>
+                      <Typography variant="body2" color="text.secondary">
+                        {course.tutor?.name || 'Expert Tutor'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+                        <Star sx={{ fontSize: '1rem', color: '#fbbf24', mr: 0.5 }} />
+                        <Typography variant="body2">4.8</Typography>
+                      </Box>
                     </Box>
 
-                    <CardContent sx={{ p: 3 }}>
-                      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, lineHeight: 1.3 }}>
-                        {course.title}
-                      </Typography>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
-                          {course.tutor?.name?.charAt(0) || 'T'}
-                        </Avatar>
-                        <Typography variant="body2" color="text.secondary">
-                          {course.tutor?.name || 'Expert Tutor'}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <AccessTime sx={{ fontSize: '1rem', color: 'text.secondary', mr: 0.5 }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {course.duration || '6 weeks'}
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
-                          <Star sx={{ fontSize: '1rem', color: '#fbbf24', mr: 0.5 }} />
-                          <Typography variant="body2">4.8</Typography>
-                        </Box>
                       </Box>
-
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <AccessTime sx={{ fontSize: '1rem', color: 'text.secondary', mr: 0.5 }} />
-                          <Typography variant="caption" color="text.secondary">
-                            {course.duration || '6 weeks'}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <People sx={{ fontSize: '1rem', color: 'text.secondary', mr: 0.5 }} />
-                          <Typography variant="caption" color="text.secondary">
-                            {course.enrolledCount || 0} students
-                          </Typography>
-                        </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <People sx={{ fontSize: '1rem', color: 'text.secondary', mr: 0.5 }} />
+                        <Typography variant="caption" color="text.secondary">
+                          {course.enrolledCount || 0} students
+                        </Typography>
                       </Box>
-                    </CardContent>
+                    </Box>
+                  </CardContent>
 
-                    <CardActions sx={{ p: 3, pt: 0 }}>
-                      <Button
-                        component={Link}
-                        to={`/courses/${course._id}`}
-                        variant="contained"
-                        fullWidth
-                        sx={{
-                          borderRadius: 2,
-                          py: 1.5,
-                          fontWeight: 600,
-                          background: '#22c55e',
-                          '&:hover': {
-                            background: '#16a34a',
-                          }
-                        }}
-                      >
-                        Learn More
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))
-            )}
+                  <CardActions sx={{ p: 3, pt: 0 }}>
+                    <Button
+                      component={Link}
+                      to={`/course/${course.id}`}
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        borderRadius: 2,
+                        py: 1.5,
+                        fontWeight: 600,
+                        background: '#22c55e',
+                        '&:hover': {
+                          background: '#16a34a',
+                        }
+                      }}
+                    >
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
 
           <Box sx={{ textAlign: 'center', mt: 6 }}>

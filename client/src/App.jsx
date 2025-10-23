@@ -6,6 +6,7 @@ import Register from './pages/Register'
 import Courses from './pages/Courses'
 import CourseDetails from './pages/CourseDetails'
 import CoursePlayer from './pages/CoursePlayer'
+import Dashboard from './pages/Dashboard'
 import AnalyticsDashboard from './pages/AnalyticsDashboard'
 import Certificates from './pages/Certificates'
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="courses/:id" element={<CourseDetails />} />
         <Route path="course/:courseId" element={<CoursePlayer />} />
         <Route path="course/:courseId/lesson/:lessonId" element={<CoursePlayer />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="analytics" element={<AnalyticsDashboard />} />
         <Route path="certificates" element={<Certificates />} />
       </Route>

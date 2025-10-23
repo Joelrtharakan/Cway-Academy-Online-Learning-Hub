@@ -30,17 +30,16 @@ import {
   People,
   Star,
 } from '@mui/icons-material'
-import { useAuthStore } from '../store'
+import { useAuthStore, useCourseStore } from '../store'
 import mockCourses from '../mock/mockCourses'
 
 function Courses() {
   // Pagination logic
   const [page, setPage] = useState(1)
-  const limit = 12
+  const limit = 12 // Items per page
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedLevel, setSelectedLevel] = useState('')
-  const [enrolled, setEnrolled] = useState({})
   const [activeCourse, setActiveCourse] = useState(null)
   const [activeLesson, setActiveLesson] = useState(0)
   const [showQuiz, setShowQuiz] = useState(false)
@@ -50,6 +49,7 @@ function Courses() {
 
   const navigate = useNavigate()
   const { isAuthenticated } = useAuthStore()
+  const { enrollCourse, isEnrolled } = useCourseStore()
 
   // Filter mock data
   const courses = mockCourses.filter(course =>
@@ -117,7 +117,10 @@ function Courses() {
       return
     }
 
-    setEnrolled(prev => ({ ...prev, [courseId]: true }))
+    const course = mockCourses.find(c => c.id === courseId)
+    if (course) {
+      enrollCourse(course)
+    }
     setActiveCourse(courseId)
     setActiveLesson(0)
     setShowQuiz(false)
@@ -168,15 +171,6 @@ function Courses() {
             }}
           >
             Courses
-          </Typography>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              color: '#6b7280', 
-              fontWeight: 400 
-            }}
-          >
-            {totalCourses > 0 ? `${totalCourses} courses available` : 'Discover our courses'}
           </Typography>
         </Box>
 
@@ -363,8 +357,36 @@ function Courses() {
             {courses.map((course) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={course.id}>
                 <Card sx={{ borderRadius: 2, border: '1px solid #e5e5e5', boxShadow: 'none', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.2s', '&:hover': { boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', borderColor: '#d1d5db' } }}>
-                  <Box sx={{ height: 160, bgcolor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', borderRadius: '8px 8px 0 0' }}>
-                    <Typography variant="h3" sx={{ color: '#d1d5db' }}>📚</Typography>
+                  <Box sx={{ height: 160, position: 'relative', borderRadius: '8px 8px 0 0', overflow: 'hidden' }}>
+                    <img
+                      src={course.thumbnail}
+                      alt={course.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        bgcolor: '#f3f4f6',
+                        display: 'none',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Typography variant="h3" sx={{ color: '#d1d5db' }}>📚</Typography>
+                    </Box>
                     {course.category && (
                       <Chip label={course.category} size="small" sx={{ position: 'absolute', top: 12, right: 12, bgcolor: 'white', border: '1px solid #e5e5e5', fontSize: '0.75rem', fontWeight: 500 }} />
                     )}
@@ -383,12 +405,12 @@ function Courses() {
                     <Typography variant="body2" sx={{ color: '#6b7280', mt: 2 }}>{course.description}</Typography>
                   </CardContent>
                   <CardActions sx={{ p: 3, pt: 0 }}>
-                    {!enrolled[course.id] ? (
+                    {!isEnrolled(course.id) ? (
                       <Button fullWidth variant="contained" sx={{ bgcolor: '#111827', color: 'white', textTransform: 'none', fontWeight: 500, py: 1.5, borderRadius: 2, boxShadow: 'none', '&:hover': { bgcolor: '#1f2937', boxShadow: 'none' } }} onClick={() => handleEnroll(course.id)}>
                         Enroll Now
                       </Button>
                     ) : (
-                      <Button fullWidth variant="contained" sx={{ bgcolor: '#2563eb', color: 'white', textTransform: 'none', fontWeight: 500, py: 1.5, borderRadius: 2, boxShadow: 'none', '&:hover': { bgcolor: '#1d4ed8', boxShadow: 'none' } }} onClick={() => window.location.href = `/course/${course.id}`}>
+                      <Button fullWidth variant="contained" sx={{ bgcolor: '#2563eb', color: 'white', textTransform: 'none', fontWeight: 500, py: 1.5, borderRadius: 2, boxShadow: 'none', '&:hover': { bgcolor: '#1d4ed8', boxShadow: 'none' } }} onClick={() => navigate(`/course/${course.id}`)}>
                         Start Course
                       </Button>
                     )}

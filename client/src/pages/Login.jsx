@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
 import {
   Container,
   Paper,
@@ -23,7 +22,6 @@ import {
 } from '@mui/icons-material'
 import { Formik, Form } from "formik"
 import * as Yup from "yup"
-import api from "../api/index.js"
 import { useAuthStore } from "../store"
 
 const validationSchema = Yup.object({
@@ -39,14 +37,51 @@ function Login() {
   const navigate = useNavigate()
   const login = useAuthStore((state) => state.login)
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const loginMutation = useMutation({
-    mutationFn: (credentials) => api.post('/api/auth/login', credentials),
-    onSuccess: (data) => {
-      login(data.data)
+  // Mock authentication function
+  const handleLogin = async (credentials) => {
+    setIsLoading(true)
+    setError('')
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // Mock user data
+    const mockUsers = {
+      'ali.student@cway.ac': {
+        _id: 'student123',
+        name: 'Ali Student',
+        email: 'ali.student@cway.ac',
+        role: 'student',
+        avatar: '/student-ali.jpg'
+      },
+      'tutor.ai@cway.ac': {
+        _id: 'tutor123',
+        name: 'AI Tutor',
+        email: 'tutor.ai@cway.ac',
+        role: 'tutor',
+        avatar: '/tutor-ai.jpg'
+      }
+    }
+
+    const mockPassword = 'P@ssw0rd!'
+
+    // Check credentials
+    if (credentials.password === mockPassword && mockUsers[credentials.email]) {
+      const userData = {
+        user: mockUsers[credentials.email],
+        accessToken: 'mock-jwt-token-' + Date.now()
+      }
+      login(userData)
       navigate('/dashboard')
-    },
-  })
+    } else {
+      setError('Invalid email or password. Please try again.')
+    }
+
+    setIsLoading(false)
+  }
 
   return (
     <Box
@@ -102,8 +137,8 @@ function Login() {
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-              loginMutation.mutate(values)
+            onSubmit={async (values) => {
+              await handleLogin(values)
             }}
           >
             {({ errors, touched, handleChange, handleBlur, values }) => (
@@ -171,9 +206,9 @@ function Login() {
                     </MuiLink>
                   </Box>
 
-                  {loginMutation.isError && (
+                  {error && (
                     <Alert severity="error" sx={{ borderRadius: 2 }}>
-                      {loginMutation.error?.response?.data?.error || 'Login failed. Please try again.'}
+                      {error}
                     </Alert>
                   )}
 
@@ -181,7 +216,7 @@ function Login() {
                     type="submit"
                     fullWidth
                     variant="contained"
-                    disabled={loginMutation.isPending}
+                    disabled={isLoading}
                     sx={{
                       py: 1.5,
                       borderRadius: 2,
@@ -190,7 +225,7 @@ function Login() {
                       textTransform: 'none',
                     }}
                   >
-                    {loginMutation.isPending ? 'Signing In...' : 'Sign In'}
+                    {isLoading ? 'Signing In...' : 'Sign In'}
                   </Button>
                 </Stack>
               </Form>

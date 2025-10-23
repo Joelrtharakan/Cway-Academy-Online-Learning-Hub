@@ -8,6 +8,7 @@ const mockCourses = [
     level: 'Beginner',
     duration: '6 weeks',
     enrolledCount: 42,
+    thumbnail: 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=400&h=250&fit=crop&crop=center',
     description: 'Learn the basics of JavaScript, including variables, functions, and DOM manipulation.',
     sections: [
       {
@@ -57,7 +58,37 @@ const mockCourses = [
             duration: '40 min',
             videoUrl: 'https://youtu.be/8zKuNo4ay8E',
             textNotes: 'Functions are reusable blocks of code.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of JavaScript functions.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'What keyword is used to declare a function in JavaScript?',
+                  options: [
+                    { key: 'func', text: 'func' },
+                    { key: 'function', text: 'function' },
+                    { key: 'def', text: 'def' },
+                    { key: 'method', text: 'method' }
+                  ],
+                  answer: ['function']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What does a function return if no return statement is provided?',
+                  options: [
+                    { key: 'null', text: 'null' },
+                    { key: 'undefined', text: 'undefined' },
+                    { key: '0', text: '0' },
+                    { key: 'false', text: 'false' }
+                  ],
+                  answer: ['undefined']
+                }
+              ]
+            }
           },
           {
             id: 'lesson3',
@@ -65,7 +96,37 @@ const mockCourses = [
             duration: '35 min',
             videoUrl: 'https://youtu.be/0ik6X4Drr_4',
             textNotes: 'Interact with web pages using the DOM.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of DOM manipulation.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'Which method is used to select an element by its ID?',
+                  options: [
+                    { key: 'getElementById', text: 'getElementById' },
+                    { key: 'querySelector', text: 'querySelector' },
+                    { key: 'getElementsByClassName', text: 'getElementsByClassName' },
+                    { key: 'getElementsByTagName', text: 'getElementsByTagName' }
+                  ],
+                  answer: ['getElementById']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What does innerHTML do?',
+                  options: [
+                    { key: 'changes', text: 'Changes the HTML content of an element' },
+                    { key: 'styles', text: 'Changes the CSS styles of an element' },
+                    { key: 'attributes', text: 'Changes the attributes of an element' },
+                    { key: 'events', text: 'Adds event listeners to an element' }
+                  ],
+                  answer: ['changes']
+                }
+              ]
+            }
           }
         ]
       }
@@ -79,6 +140,7 @@ const mockCourses = [
     level: 'Beginner',
     duration: '8 weeks',
     enrolledCount: 35,
+    thumbnail: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&h=250&fit=crop&crop=center',
     description: 'Start your Python journey with syntax, loops, and functions.',
     sections: [
       {
@@ -126,9 +188,39 @@ const mockCourses = [
             id: 'lesson2',
             title: 'Loops',
             duration: '40 min',
-            videoUrl: 'https://youtu.be/6iF8Xb7Z3wQ',
+            videoUrl: 'https://youtu.be/hdI2bqOjy3c',
             textNotes: 'Loops repeat actions. For and while loops are common.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of Python loops.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'Which loop is used when you know the number of iterations?',
+                  options: [
+                    { key: 'for', text: 'for' },
+                    { key: 'while', text: 'while' },
+                    { key: 'do', text: 'do-while' },
+                    { key: 'repeat', text: 'repeat' }
+                  ],
+                  answer: ['for']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What keyword is used to exit a loop prematurely?',
+                  options: [
+                    { key: 'break', text: 'break' },
+                    { key: 'exit', text: 'exit' },
+                    { key: 'stop', text: 'stop' },
+                    { key: 'end', text: 'end' }
+                  ],
+                  answer: ['break']
+                }
+              ]
+            }
           },
           {
             id: 'lesson3',
@@ -136,7 +228,37 @@ const mockCourses = [
             duration: '35 min',
             videoUrl: 'https://youtu.be/NSbOtFM1u6Y',
             textNotes: 'Functions organize code into reusable blocks.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of Python functions.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'What keyword defines a function in Python?',
+                  options: [
+                    { key: 'func', text: 'func' },
+                    { key: 'def', text: 'def' },
+                    { key: 'function', text: 'function' },
+                    { key: 'method', text: 'method' }
+                  ],
+                  answer: ['def']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What does a function return if no return statement is provided?',
+                  options: [
+                    { key: 'null', text: 'null' },
+                    { key: 'none', text: 'None' },
+                    { key: 'undefined', text: 'undefined' },
+                    { key: '0', text: '0' }
+                  ],
+                  answer: ['none']
+                }
+              ]
+            }
           }
         ]
       }
@@ -149,6 +271,7 @@ const mockCourses = [
     tutor: { name: 'Charlie' },
     duration: '5 weeks',
     enrolledCount: 28,
+    thumbnail: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400&h=250&fit=crop&crop=center',
     description: 'Take your React skills to the next level with hooks, context, and advanced patterns.',
     level: 'Intermediate',
     sections: [
@@ -199,7 +322,37 @@ const mockCourses = [
             duration: '40 min',
             videoUrl: 'https://youtu.be/35lXWvCuM8o',
             textNotes: 'Manage global state with context.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of React Context API.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'What hook is used to consume context?',
+                  options: [
+                    { key: 'useContext', text: 'useContext' },
+                    { key: 'useState', text: 'useState' },
+                    { key: 'useEffect', text: 'useEffect' },
+                    { key: 'useReducer', text: 'useReducer' }
+                  ],
+                  answer: ['useContext']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'When should you use Context API?',
+                  options: [
+                    { key: 'local', text: 'For local component state' },
+                    { key: 'global', text: 'For global application state' },
+                    { key: 'form', text: 'For form validation' },
+                    { key: 'styling', text: 'For component styling' }
+                  ],
+                  answer: ['global']
+                }
+              ]
+            }
           },
           {
             id: 'lesson3',
@@ -207,7 +360,37 @@ const mockCourses = [
             duration: '35 min',
             videoUrl: 'https://youtu.be/0vVofAhAYjc',
             textNotes: 'Explore render props and HOCs.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of React advanced patterns.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'What is a Higher-Order Component (HOC)?',
+                  options: [
+                    { key: 'component', text: 'A component that takes another component as input' },
+                    { key: 'hook', text: 'A special type of hook' },
+                    { key: 'pattern', text: 'A CSS design pattern' },
+                    { key: 'library', text: 'A React library' }
+                  ],
+                  answer: ['component']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What does render prop pattern allow?',
+                  options: [
+                    { key: 'sharing', text: 'Sharing logic between components' },
+                    { key: 'styling', text: 'Dynamic styling' },
+                    { key: 'routing', text: 'Client-side routing' },
+                    { key: 'testing', text: 'Component testing' }
+                  ],
+                  answer: ['sharing']
+                }
+              ]
+            }
           }
         ]
       }
@@ -220,6 +403,7 @@ const mockCourses = [
     tutor: { name: 'Dana' },
     duration: '10 weeks',
     enrolledCount: 15,
+    thumbnail: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop&crop=center',
     description: 'Master machine learning, deep learning, and big data tools.',
     level: 'Advanced',
     sections: [
@@ -270,7 +454,37 @@ const mockCourses = [
             duration: '50 min',
             videoUrl: 'https://youtu.be/aircAruvnKk',
             textNotes: 'Neural networks and frameworks.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of deep learning concepts.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'What is a neural network?',
+                  options: [
+                    { key: 'algorithm', text: 'A machine learning algorithm' },
+                    { key: 'network', text: 'A network of interconnected nodes' },
+                    { key: 'database', text: 'A type of database' },
+                    { key: 'language', text: 'A programming language' }
+                  ],
+                  answer: ['network']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What is backpropagation used for?',
+                  options: [
+                    { key: 'training', text: 'Training neural networks' },
+                    { key: 'prediction', text: 'Making predictions' },
+                    { key: 'visualization', text: 'Data visualization' },
+                    { key: 'preprocessing', text: 'Data preprocessing' }
+                  ],
+                  answer: ['training']
+                }
+              ]
+            }
           },
           {
             id: 'lesson3',
@@ -278,7 +492,37 @@ const mockCourses = [
             duration: '40 min',
             videoUrl: 'https://youtu.be/2w5p5Qp5nTg',
             textNotes: 'Tools for handling large datasets.',
-            quiz: null
+            quiz: {
+              timeLimitSec: 300,
+              passingScore: 80,
+              description: 'Test your knowledge of big data tools and concepts.',
+              questions: [
+                {
+                  id: 'q1',
+                  type: 'MCQ',
+                  prompt: 'What does Hadoop primarily provide?',
+                  options: [
+                    { key: 'storage', text: 'Distributed storage (HDFS)' },
+                    { key: 'database', text: 'Relational database' },
+                    { key: 'visualization', text: 'Data visualization' },
+                    { key: 'modeling', text: 'Statistical modeling' }
+                  ],
+                  answer: ['storage']
+                },
+                {
+                  id: 'q2',
+                  type: 'MCQ',
+                  prompt: 'What is MapReduce?',
+                  options: [
+                    { key: 'algorithm', text: 'A programming model for processing large datasets' },
+                    { key: 'database', text: 'A NoSQL database' },
+                    { key: 'framework', text: 'A web framework' },
+                    { key: 'language', text: 'A query language' }
+                  ],
+                  answer: ['algorithm']
+                }
+              ]
+            }
           }
         ]
       }
