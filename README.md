@@ -1,156 +1,381 @@
 # Cway Academy - Online Learning Management System
 
-A comprehensive MERN stack learning management system with quizzes, discussions, certificates, and analytics.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![MongoDB Version](https://img.shields.io/badge/mongodb-%3E%3D4.4-red)](https://www.mongodb.com/)
 
-## Features
+A comprehensive MERN stack learning management system designed for modern educational institutions. Features interactive quizzes, real-time discussions, automated certificate generation, and advanced analytics.
 
-- **Authentication & Authorization**: JWT-based auth with role-based access control (Student/Tutor/Admin)
-- **Course Management**: Create, manage, and enroll in courses with video lessons
-- **Interactive Quizzes**: Multiple choice, multiple answer, and true/false questions with auto-grading
-- **Real-time Discussions**: Socket.IO powered chat rooms for courses and lessons
-- **Certificates**: PDF certificate generation with QR code verification
-- **Live Polls**: Real-time polling during lessons
-- **Analytics Dashboard**: Comprehensive analytics for tutors and admins
-- **Gamification**: Badges and leaderboards
-- **AI Quiz Assist**: Mock AI-powered quiz question generation
+## 🌟 Key Features
 
-## Tech Stack
+### 📚 Comprehensive LMS Features
+- **Role-Based Access Control**: Student, Tutor, and Admin roles with granular permissions
+- **Interactive Course Management**: Create, organize, and deliver multi-section courses
+- **Advanced Quizzing System**: Multiple choice, multiple answer, and true/false questions
+- **Real-Time Discussions**: Socket.IO-powered chat rooms for collaborative learning
+- **Progress Tracking**: Detailed student progress monitoring and completion tracking
+- **README.md Course Creation**: Teachers can create courses directly from README.md files
+
+### 🎯 Interactive Learning Tools
+- **Live Polls**: Real-time polling during lessons for engagement
+- **Certificate Generation**: Automated PDF certificates with QR code verification
+- **Gamification**: Badge system and leaderboards for motivation
+- **Video Lessons**: Integrated video player with timestamp support
+
+### 📊 Analytics & Insights
+- **Comprehensive Dashboard**: Detailed analytics for tutors and administrators
+- **Performance Metrics**: Student progress, quiz scores, and engagement statistics
+- **System Analytics**: Platform-wide usage and performance monitoring
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- React 18 with Vite
-- Material UI for components
-- React Query for data fetching
-- Zustand for state management
-- Socket.IO client for real-time features
-- React Player for video playback
-- Chart.js for analytics
+- **React 18** with Vite for fast development and building
+- **Material-UI (MUI)** for modern, accessible component library
+- **React Query** for efficient server state management
+- **Zustand** for lightweight client-side state management
+- **Socket.IO Client** for real-time communication
+- **React Player** for video playback integration
+- **Chart.js** for data visualization
+- **React Router** for client-side routing
 
 ### Backend
-- Node.js with Express
-- MongoDB with Mongoose
-- Socket.IO for real-time communication
-- JWT for authentication
-- PDFKit for certificate generation
-- Multer for file uploads
+- **Node.js** with Express.js framework
+- **MongoDB** with Mongoose ODM
+- **Socket.IO** for real-time bidirectional communication
+- **JWT** for secure authentication and authorization
+- **PDFKit** for certificate generation
+- **Multer** for file upload handling
 
-## Quick Start
+### Development & Deployment
+- **ESLint** for code quality and consistency
+- **Jest** for unit testing
+- **Husky** for Git hooks
+- **Prettier** for code formatting
+- **Docker** support for containerized deployment
+
+## 🏛️ System Architecture
+
+```mermaid
+graph TB
+    %% User Layer
+    subgraph "Users"
+        Student[👨‍🎓 Student]
+        Tutor[👨‍🏫 Tutor]
+        Admin[👑 Admin]
+    end
+
+    %% Frontend Layer
+    subgraph "Frontend (React + Vite)"
+        React[⚛️ React 18<br/>SPA Application]
+        MUI[🎨 Material-UI<br/>Components]
+        Zustand[📦 Zustand<br/>State Management]
+        RQ[🔄 React Query<br/>Data Fetching]
+        SocketClient[🔌 Socket.IO Client<br/>Real-time]
+    end
+
+    %% Backend Layer
+    subgraph "Backend (Node.js + Express)"
+        Express[🚀 Express.js<br/>API Server]
+        Auth[🔐 JWT Auth<br/>Middleware]
+        Routes[🛣️ API Routes<br/>Controllers]
+        SocketServer[🔌 Socket.IO Server<br/>Real-time]
+        Cert[📜 PDFKit<br/>Certificates]
+    end
+
+    %% External Services
+    subgraph "External Services"
+        Email[📧 Nodemailer<br/>Email Service]
+    end
+
+    %% Data Layer
+    subgraph "Data Layer"
+        MongoDB[(📊 MongoDB<br/>Database)]
+        FileStorage[💾 File Storage<br/>Media/Certificates]
+    end
+
+    %% Connections
+    Student --> React
+    Tutor --> React
+    Admin --> React
+
+    React --> RQ
+    React --> SocketClient
+    React --> MUI
+    React --> Zustand
+
+    RQ --> Express
+    SocketClient --> SocketServer
+
+    Express --> Auth
+    Express --> Routes
+    Express --> SocketServer
+    Routes --> Cert
+
+    Routes --> MongoDB
+    Cert --> MongoDB
+
+    Cert --> FileStorage
+    Routes --> FileStorage
+
+    Routes --> Email
+
+    %% Styling
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef users fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+
+    class React,MUI,Zustand,RQ,SocketClient frontend
+    class Express,Auth,Routes,SocketServer,Cert backend
+    class Email external
+    class MongoDB,FileStorage data
+    class Student,Tutor,Admin users
+```
+
+### Architecture Overview
+
+**🏗️ Multi-Tier Architecture:**
+- **Presentation Layer**: React SPA with Material-UI components
+- **Application Layer**: Express.js API server with business logic
+- **Data Layer**: MongoDB with Mongoose ODM and file storage
+
+**🔄 Real-Time Communication:**
+- Socket.IO enables live discussions, polling, and instant messaging
+- Bidirectional communication between client and server
+
+**🤖 AI Integration:**
+- Google Gemini AI for automated course content generation
+- YouTube Data API for educational video discovery
+- Personalized learning path recommendations
+
+**🔒 Security & Authentication:**
+- JWT-based authentication with refresh tokens
+- Role-based access control (Student/Tutor/Admin)
+- Helmet.js for security headers
+
+**📊 Data Flow:**
+1. Users interact with React frontend
+2. API requests handled by Express routes
+3. Business logic processed by controllers
+4. Data persisted in MongoDB
+5. Real-time events broadcast via Socket.IO
+6. AI services called for content generation
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB 4.4+
-- npm or yarn
+- **Node.js** 18.0.0 or higher
+- **MongoDB** 4.4 or higher (local installation or MongoDB Atlas)
+- **npm** or **yarn** package manager
+- **Git** for version control
 
 ### Installation
 
-1. **Clone and setup the monorepo:**
+1. **Clone the Repository**
    ```bash
-   git clone <repository-url>
-   cd cway-academy
+   git clone https://github.com/Joelrtharakan/Cway-Academy-Online-Learning-Hub.git
+   cd Cway-Academy-Online-Learning-Hub
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   # Install all workspace dependencies
    npm install
    ```
 
-2. **Environment Setup:**
+3. **Environment Configuration**
 
-   Copy the example environment files:
+   Create environment files for both client and server:
+
    ```bash
+   # Client environment variables
    cp client/.env.example client/.env
+
+   # Server environment variables
    cp server/.env.example server/.env
    ```
 
-   Update `server/.env` with your MongoDB connection:
-   ```
+   **Required Server Environment Variables:**
+   ```env
+   # Database
    MONGODB_URI=mongodb://localhost:27017/cway-academy
-   JWT_SECRET=your-super-secret-jwt-key
-   JWT_REFRESH_SECRET=your-super-secret-refresh-key
+
+   # Authentication
+   JWT_SECRET=your-super-secret-jwt-key-here
+   JWT_REFRESH_SECRET=your-super-secret-refresh-key-here
+
+   # AI Services (Optional - for AI features)
+   GEMINI_API_KEY=your-gemini-api-key
+   YOUTUBE_API_KEY=your-youtube-api-key
+
+   # Server Configuration
+   PORT=4000
+   CLIENT_URL=http://localhost:5173
    ```
 
-3. **Seed the database:**
+4. **Database Setup**
    ```bash
+   # Seed the database with sample data
    npm run seed
    ```
 
-4. **Start the application:**
+5. **Start Development Servers**
    ```bash
+   # Start both client and server concurrently
    npm run dev
    ```
 
-   This will start both the client (http://localhost:5173) and server (http://localhost:4000).
+   The application will be available at:
+   - **Frontend**: http://localhost:5173
+   - **Backend API**: http://localhost:4000
 
-## Demo Accounts
+## 👥 Demo Accounts
 
-After seeding, you can login with these accounts:
+After running the seed script, use these accounts to explore the platform:
 
-| Role    | Email                  | Password    |
-|---------|------------------------|-------------|
-| Admin   | admin@cway.ac         | P@ssw0rd!  |
-| Tutor   | tutor.ai@cway.ac      | P@ssw0rd!  |
-| Tutor   | tutor.math@cway.ac    | P@ssw0rd!  |
-| Student | ali.student@cway.ac   | P@ssw0rd!  |
-| Student | rina.student@cway.ac  | P@ssw0rd!  |
-| Student | dev.student@cway.ac   | P@ssw0rd!  |
+| Role    | Email                  | Password    | Description |
+|---------|------------------------|-------------|-------------|
+| Admin   | admin@cway.ac         | P@ssw0rd!  | Full system access |
+| Tutor   | tutor.ai@cway.ac      | P@ssw0rd!  | AI course creation |
+| Tutor   | tutor.math@cway.ac    | P@ssw0rd!  | Mathematics courses |
+| Student | ali.student@cway.ac   | P@ssw0rd!  | Regular student |
+| Student | rina.student@cway.ac  | P@ssw0rd!  | Active learner |
+| Student | dev.student@cway.ac   | P@ssw0rd!  | Developer student |
 
-## Demo Flow
+## 📖 Usage Guide
 
-1. **Login as a student** (e.g., ali.student@cway.ac)
-2. **Browse courses** and enroll in "Intro to Data Structures"
-3. **Watch lesson videos** and complete the quiz
-4. **View quiz results** and download certificate
-5. **Participate in discussions** using the chat feature
-6. **Login as tutor** (tutor.ai@cway.ac) to see analytics
+### For Students
+1. **Registration/Login**: Create an account or use demo credentials
+2. **Browse Courses**: Explore available courses by category
+3. **Enroll & Learn**: Enroll in courses and access video lessons
+4. **Take Quizzes**: Complete interactive quizzes with auto-grading
+5. **Earn Certificates**: Download verified certificates upon completion
+6. **Participate**: Join discussions and engage with peers
 
-## API Documentation
+### For Tutors
+1. **Create Courses**: Build courses manually or use AI generation
+2. **Manage Content**: Add sections, lessons, and quiz questions
+3. **Monitor Progress**: Track student enrollment and completion
+4. **View Analytics**: Access detailed course and student performance data
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/refresh` - Refresh access token
-- `GET /api/auth/me` - Get current user profile
+### For Administrators
+1. **System Overview**: Monitor platform-wide statistics
+2. **User Management**: Manage users, roles, and permissions
+3. **Content Moderation**: Oversee courses and user-generated content
+4. **Analytics Access**: View comprehensive system analytics
 
-### Courses
-- `GET /api/courses` - List courses (with pagination/search)
-- `GET /api/courses/:id` - Get course details
-- `POST /api/courses` - Create course (tutor/admin)
-- `POST /api/courses/:id/enrol` - Enroll in course (student)
+## 🔌 API Documentation
 
-### Quizzes
-- `GET /api/quizzes/:id` - Get quiz questions
-- `POST /api/quizzes/:id/attempts` - Start quiz attempt
-- `PATCH /api/attempts/:id/submit` - Submit quiz answers
+### Authentication Endpoints
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+GET  /api/auth/me
+POST /api/auth/logout
+```
 
-### Certificates
-- `POST /api/certificates` - Generate certificate
-- `GET /api/certificates/verify/:code` - Verify certificate
+### Course Management
+```http
+GET    /api/courses              # List courses with pagination
+GET    /api/courses/:id          # Get course details
+POST   /api/courses              # Create course (Tutor/Admin)
+PUT    /api/courses/:id          # Update course
+DELETE /api/courses/:id          # Delete course
+POST   /api/courses/:id/enroll   # Enroll in course
+```
+
+### Quiz System
+```http
+GET    /api/quizzes/:id                    # Get quiz questions
+POST   /api/quizzes/:id/attempts           # Start quiz attempt
+PATCH  /api/attempts/:id/submit            # Submit quiz answers
+GET    /api/attempts/:id/results           # Get attempt results
+```
+
+### AI Features
+```http
+POST /api/ai/generate-course    # Generate complete course content
+POST /api/ai/personalize-path   # Create personalized learning path
+```
+
+### Real-Time Features (Socket.IO)
+```javascript
+// Join discussion room
+socket.emit('join_room', { roomId: 'course-123' });
+
+// Send message
+socket.emit('new_message', { roomId: 'course-123', text: 'Hello!' });
+
+// Live polling
+socket.emit('live_poll_create', { courseId: '123', question: 'Q?', options: ['A', 'B'] });
+socket.emit('live_poll_vote', { pollId: '456', optionKey: 'A' });
+```
 
 ### Analytics
-- `GET /api/analytics/course/:id` - Course analytics (tutor/admin)
-- `GET /api/analytics/system` - System analytics (admin)
-
-## Project Structure
-
-```
-cway-academy/
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── pages/         # Page components
-│   │   ├── store/         # Zustand stores
-│   │   └── services/      # API and socket services
-├── server/                 # Node.js backend
-│   ├── src/
-│   │   ├── models/        # Mongoose models
-│   │   ├── routes/        # API routes
-│   │   ├── controllers/   # Route controllers
-│   │   ├── middleware/    # Auth/validation middleware
-│   │   └── utils/         # Helper utilities
-│   └── storage/           # File uploads and mock data
-└── docs/                  # Documentation
+```http
+GET /api/analytics/course/:id     # Course analytics (Tutor/Admin)
+GET /api/analytics/system         # System analytics (Admin)
+GET /api/analytics/student/:id    # Student analytics
 ```
 
-## Development
+### Certificates
+```http
+POST /api/certificates            # Generate certificate
+GET  /api/certificates/verify/:code # Verify certificate authenticity
+```
 
-### Running Tests
+## 🏗️ Project Structure
+
+```
+Cway-Academy-Online-Learning-Hub/
+├── client/                      # React Frontend Application
+│   ├── public/                  # Static assets
+│   ├── src/
+│   │   ├── components/          # Reusable UI components
+│   │   │   ├── CourseViewer.jsx
+│   │   │   └── Layout.jsx
+│   │   ├── pages/              # Page components
+│   │   │   ├── AICourseGenerator.jsx
+│   │   │   ├── AnalyticsDashboard.jsx
+│   │   │   ├── Certificates.jsx
+│   │   │   ├── CoursePlayer.jsx
+│   │   │   └── Dashboard.jsx
+│   │   ├── context/            # React context providers
+│   │   ├── store/              # Zustand state stores
+│   │   ├── services/           # API and socket services
+│   │   ├── utils/              # Utility functions
+│   │   ├── theme.js            # Material-UI theme configuration
+│   │   └── App.jsx             # Main application component
+│   ├── package.json
+│   └── vite.config.js
+├── server/                      # Node.js Backend API
+│   ├── src/
+│   │   ├── config/             # Database and configuration
+│   │   ├── controllers/        # Route controllers
+│   │   │   ├── aiController.js
+│   │   │   └── courseController.js
+│   │   ├── middleware/         # Authentication and validation
+│   │   ├── models/             # Mongoose data models
+│   │   ├── routes/             # API route definitions
+│   │   ├── services/           # External service integrations
+│   │   ├── utils/              # Helper utilities
+│   │   └── index.js            # Server entry point
+│   ├── storage/                # File uploads and media
+│   ├── package.json
+│   └── scripts/                # Database seeding scripts
+├── package.json                # Workspace configuration
+├── requirements.txt            # Python dependencies (if needed)
+├── check_mongodb.py           # MongoDB connection checker
+└── README.md                  # This file
+```
+
+## 🧪 Testing
+
 ```bash
-# Run all tests
+# Run all tests across workspaces
 npm run test
 
 # Run client tests only
@@ -158,56 +383,130 @@ cd client && npm run test
 
 # Run server tests only
 cd server && npm run test
+
+# Run tests with coverage
+npm run test -- --coverage
 ```
 
-### Linting
+## 🎨 Development
+
+### Code Quality
 ```bash
+# Run linting across all workspaces
 npm run lint
+
+# Format code with Prettier
+npx prettier --write .
 ```
 
 ### Building for Production
 ```bash
-# Build client
+# Build client for production
 cd client && npm run build
 
-# Build server
+# Build server for production
 cd server && npm run build
 ```
 
-## Deployment
-
-### Docker (Optional)
+### Docker Deployment (Optional)
 ```bash
 # Build and run with Docker Compose
 docker-compose up --build
+
+# Run in detached mode
+docker-compose up -d --build
 ```
 
-### Environment Variables
+## 🔧 Configuration
+
+### Environment Variables Reference
 
 #### Client (.env)
-```
+```env
 VITE_API_URL=http://localhost:4000
 VITE_SOCKET_URL=http://localhost:4000
+VITE_APP_NAME=Cway Academy
 ```
 
 #### Server (.env)
-```
+```env
+# Server Configuration
 PORT=4000
-MONGODB_URI=mongodb://localhost:27017/cway-academy
-JWT_SECRET=your-jwt-secret
-JWT_REFRESH_SECRET=your-jwt-refresh-secret
+NODE_ENV=development
 CLIENT_URL=http://localhost:5173
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/cway-academy
+
+# Authentication
+JWT_SECRET=your-256-bit-secret-key
+JWT_REFRESH_SECRET=your-256-bit-refresh-secret
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+
+# AI Services (Optional)
+GEMINI_API_KEY=your-gemini-api-key
+YOUTUBE_API_KEY=your-youtube-api-key
+
+# Email Service (Optional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+
+# File Upload
+MAX_FILE_SIZE=10485760
+UPLOAD_PATH=./storage/media
 ```
 
-## Contributing
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Run linting and tests
-6. Submit a pull request
+We welcome contributions! Please follow these steps:
 
-## License
+1. **Fork the Repository**
+2. **Create a Feature Branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Make Your Changes**
+4. **Add Tests** for new features
+5. **Run Quality Checks**
+   ```bash
+   npm run lint
+   npm run test
+   ```
+6. **Commit Your Changes**
+   ```bash
+   git commit -m 'Add amazing feature'
+   ```
+7. **Push to Branch**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+8. **Open a Pull Request**
 
-This project is licensed under the MIT License.
+### Development Guidelines
+- Follow ESLint configuration
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Google Generative AI** for powering AI course generation
+- **Material-UI** for the beautiful component library
+- **Socket.IO** for real-time communication
+- **MongoDB** for reliable data storage
+
+## 📞 Support
+
+For support, email support@cway.academy or join our [Discord community](https://discord.gg/cway-academy).
+
+---
+
+**Built with ❤️ for modern education**
