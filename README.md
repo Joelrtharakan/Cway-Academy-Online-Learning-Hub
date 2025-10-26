@@ -145,11 +145,6 @@ graph TB
 - Socket.IO enables live discussions, polling, and instant messaging
 - Bidirectional communication between client and server
 
-**🤖 AI Integration:**
-- Google Gemini AI for automated course content generation
-- YouTube Data API for educational video discovery
-- Personalized learning path recommendations
-
 **🔒 Security & Authentication:**
 - JWT-based authentication with refresh tokens
 - Role-based access control (Student/Tutor/Admin)
@@ -161,7 +156,6 @@ graph TB
 3. Business logic processed by controllers
 4. Data persisted in MongoDB
 5. Real-time events broadcast via Socket.IO
-6. AI services called for content generation
 
 ## 🚀 Quick Start
 
@@ -206,10 +200,6 @@ graph TB
    JWT_SECRET=your-super-secret-jwt-key-here
    JWT_REFRESH_SECRET=your-super-secret-refresh-key-here
 
-   # AI Services (Optional - for AI features)
-   GEMINI_API_KEY=your-gemini-api-key
-   YOUTUBE_API_KEY=your-youtube-api-key
-
    # Server Configuration
    PORT=4000
    CLIENT_URL=http://localhost:5173
@@ -238,7 +228,7 @@ After running the seed script, use these accounts to explore the platform:
 | Role    | Email                  | Password    | Description |
 |---------|------------------------|-------------|-------------|
 | Admin   | admin@cway.ac         | P@ssw0rd!  | Full system access |
-| Tutor   | tutor.ai@cway.ac      | P@ssw0rd!  | AI course creation |
+| Tutor   | tutor.ai@cway.ac      | P@ssw0rd!  | Course content creation |
 | Tutor   | tutor.math@cway.ac    | P@ssw0rd!  | Mathematics courses |
 | Student | ali.student@cway.ac   | P@ssw0rd!  | Regular student |
 | Student | rina.student@cway.ac  | P@ssw0rd!  | Active learner |
@@ -255,7 +245,7 @@ After running the seed script, use these accounts to explore the platform:
 6. **Participate**: Join discussions and engage with peers
 
 ### For Tutors
-1. **Create Courses**: Build courses manually or use AI generation
+1. **Create Courses**: Build courses manually or import from README.md files
 2. **Manage Content**: Add sections, lessons, and quiz questions
 3. **Monitor Progress**: Track student enrollment and completion
 4. **View Analytics**: Access detailed course and student performance data
@@ -295,12 +285,6 @@ PATCH  /api/attempts/:id/submit            # Submit quiz answers
 GET    /api/attempts/:id/results           # Get attempt results
 ```
 
-### AI Features
-```http
-POST /api/ai/generate-course    # Generate complete course content
-POST /api/ai/personalize-path   # Create personalized learning path
-```
-
 ### Real-Time Features (Socket.IO)
 ```javascript
 // Join discussion room
@@ -338,7 +322,7 @@ Cway-Academy-Online-Learning-Hub/
 │   │   │   ├── CourseViewer.jsx
 │   │   │   └── Layout.jsx
 │   │   ├── pages/              # Page components
-│   │   │   ├── AICourseGenerator.jsx
+│   │   │   ├── CourseGenerator.jsx
 │   │   │   ├── AnalyticsDashboard.jsx
 │   │   │   ├── Certificates.jsx
 │   │   │   ├── CoursePlayer.jsx
@@ -355,7 +339,7 @@ Cway-Academy-Online-Learning-Hub/
 │   ├── src/
 │   │   ├── config/             # Database and configuration
 │   │   ├── controllers/        # Route controllers
-│   │   │   ├── aiController.js
+│   │   │   ├── contentController.js
 │   │   │   └── courseController.js
 │   │   ├── middleware/         # Authentication and validation
 │   │   ├── models/             # Mongoose data models
@@ -444,10 +428,6 @@ JWT_REFRESH_SECRET=your-256-bit-refresh-secret
 JWT_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 
-# AI Services (Optional)
-GEMINI_API_KEY=your-gemini-api-key
-YOUTUBE_API_KEY=your-youtube-api-key
-
 # Email Service (Optional)
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
@@ -498,7 +478,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Google Generative AI** for powering AI course generation
 - **Material-UI** for the beautiful component library
 - **Socket.IO** for real-time communication
 - **MongoDB** for reliable data storage
