@@ -320,7 +320,7 @@ const mockCourses = [
             id: 'lesson2',
             title: 'Context API',
             duration: '40 min',
-            videoUrl: 'https://youtu.be/35lXWvCuM8o',
+            videoUrl: 'https://youtu.be/sP7ANcTpJr8', // Updated to user's preferred Context API video
             textNotes: 'Manage global state with context.',
             quiz: {
               timeLimitSec: 300,
@@ -452,7 +452,7 @@ const mockCourses = [
             id: 'lesson2',
             title: 'Deep Learning',
             duration: '50 min',
-            videoUrl: 'https://youtu.be/aircAruvnKk',
+            videoUrl: 'https://youtu.be/6M5VXKLf4D4', 
             textNotes: 'Neural networks and frameworks.',
             quiz: {
               timeLimitSec: 300,
@@ -490,7 +490,7 @@ const mockCourses = [
             id: 'lesson3',
             title: 'Big Data',
             duration: '40 min',
-            videoUrl: 'https://youtu.be/2w5p5Qp5nTg',
+            videoUrl: 'https://youtu.be/zez2Tv-bcXY', // Updated to user's preferred Big Data video
             textNotes: 'Tools for handling large datasets.',
             quiz: {
               timeLimitSec: 300,

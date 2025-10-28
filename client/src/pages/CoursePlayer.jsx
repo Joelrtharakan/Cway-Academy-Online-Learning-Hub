@@ -532,7 +532,7 @@ function CoursePlayer() {
                         
                         {!videoError ? (
                           <iframe
-                            src={`https://www.youtube.com/embed/${extractYouTubeId(currentLesson.videoUrl)}`}
+                            src={`https://www.youtube.com/embed/${extractYouTubeId(currentLesson.videoUrl)}?rel=0&modestbranding=1`}
                             style={{
                               position: 'absolute',
                               top: 0,
@@ -542,7 +542,7 @@ function CoursePlayer() {
                               border: 'none',
                               display: videoLoading ? 'none' : 'block'
                             }}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
                             title={currentLesson.title}
                             onLoad={() => {
