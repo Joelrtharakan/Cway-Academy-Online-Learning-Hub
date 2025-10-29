@@ -58,80 +58,87 @@ A comprehensive MERN stack learning management system designed for modern educat
 
 ```mermaid
 graph TB
-    %% User Layer
-    subgraph "Users"
-        Student[👨‍🎓 Student]
-        Tutor[👨‍🏫 Tutor]
-        Admin[👑 Admin]
+    %% =====================
+    %% USERS LAYER
+    %% =====================
+    subgraph U["👥 Users"]
+        Student["👨‍🎓 **Student**"]
+        Tutor["👨‍🏫 **Tutor**"]
+        Admin["👑 **Admin**"]
     end
 
-    %% Frontend Layer
-    subgraph "Frontend (React + Vite)"
-        React[⚛️ React 18<br/>SPA Application]
-        MUI[🎨 Material-UI<br/>Components]
-        Zustand[📦 Zustand<br/>State Management]
-        RQ[🔄 React Query<br/>Data Fetching]
-        SocketClient[🔌 Socket.IO Client<br/>Real-time]
+    %% =====================
+    %% FRONTEND LAYER
+    %% =====================
+    subgraph F["🖥️ Frontend – React + Vite"]
+        React["⚛️ **React 18 (SPA)**"]
+        MUI["🎨 **Material-UI (MUI)**"]
+        Zustand["📦 **Zustand (State Mgmt)**"]
+        RQ["🔄 **React Query (Data Sync)**"]
+        SocketClient["🔌 **Socket.IO Client (Realtime)**"]
     end
 
-    %% Backend Layer
-    subgraph "Backend (Node.js + Express)"
-        Express[🚀 Express.js<br/>API Server]
-        Auth[🔐 JWT Auth<br/>Middleware]
-        Routes[🛣️ API Routes<br/>Controllers]
-        SocketServer[🔌 Socket.IO Server<br/>Real-time]
-        Cert[📜 PDFKit<br/>Certificates]
+    %% =====================
+    %% BACKEND LAYER
+    %% =====================
+    subgraph B["⚙️ Backend – Node.js + Express"]
+        Express["🚀 **Express.js (API Server)**"]
+        Auth["🔐 **JWT Auth Middleware**"]
+        SocketServer["🔌 **Socket.IO Server**"]
+        Cert["📜 **PDFKit – Certificates**"]
     end
 
-    %% External Services
-    subgraph "External Services"
-        Email[📧 Nodemailer<br/>Email Service]
+    %% =====================
+    %% DATA LAYER
+    %% =====================
+    subgraph D["💾 Data Layer"]
+        MongoDB[("🗄️ **MongoDB Database**")]
+        FileStorage[("🧾 **Media & Certificate Storage**")]
     end
 
-    %% Data Layer
-    subgraph "Data Layer"
-        MongoDB[(📊 MongoDB<br/>Database)]
-        FileStorage[💾 File Storage<br/>Media/Certificates]
-    end
+    %% =====================
+    %% CONNECTIONS
+    %% =====================
 
-    %% Connections
+    %% Users → Frontend
     Student --> React
     Tutor --> React
     Admin --> React
 
-    React --> RQ
-    React --> SocketClient
+    %% Frontend Internal
     React --> MUI
     React --> Zustand
+    React --> RQ
+    React --> SocketClient
 
+    %% Frontend → Backend
     RQ --> Express
     SocketClient --> SocketServer
 
+    %% Backend Internal
     Express --> Auth
-    Express --> Routes
     Express --> SocketServer
-    Routes --> Cert
+    Express --> Cert
 
-    Routes --> MongoDB
-    Cert --> MongoDB
-
+    %% Backend → Data Layer
+    Express --> MongoDB
     Cert --> FileStorage
-    Routes --> FileStorage
 
-    Routes --> Email
+    %% =====================
+    %% STYLES
+    %% =====================
 
-    %% Styling
-    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    classDef users fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    %% Layer coloring
+    classDef users fill:#ffebee,stroke:#c2185b,stroke-width:2px,color:#000;
+    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000;
+    classDef backend fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px,color:#000;
+    classDef data fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000;
 
-    class React,MUI,Zustand,RQ,SocketClient frontend
-    class Express,Auth,Routes,SocketServer,Cert backend
-    class Email external
-    class MongoDB,FileStorage data
-    class Student,Tutor,Admin users
+    class U users;
+    class F frontend;
+    class B backend;
+    class D data;
+
 ```
 
 ### Architecture Overview
